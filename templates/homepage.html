@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} GenericSite {% endblock %}
+
+{% block content %}
+
+    <form>
+        <h2 class="text-center text-vertical-center">{{ form.title }}</h2>
+        {% for field in form %}
+            <div class="row">
+                <div class="col mt-3 mb-2">
+                    <label>{{ field.label }}</label>
+                    {{ field }}
+                    {{ field.errors }}
+                </div>
+            </div>
+        {% endfor %}
+    </form>
+
+{% endblock %}
