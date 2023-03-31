@@ -4,17 +4,21 @@ from django.db import models
 # Create your models here.
 class Companies(models.Model):
     name = models.CharField(max_length=100, verbose_name="Название компании")
-    supplier_inn = models.PositiveBigIntegerField(verbose_name="ИНН компании", unique=True, primary_key=True)  # :NOTE: validate min_Value
+    supplier_inn = models.PositiveBigIntegerField(verbose_name="ИНН компании", unique=True, primary_key=True)
     supplier_kpp = models.PositiveBigIntegerField(verbose_name="КПП компании", unique=True)
     okved = models.CharField(max_length=100, verbose_name="Номера ОКВЭД компании")
 
-    COMPANY_STATUS = (  # :NOTE: add active, blocked
-        ()
-    )
+    ACTIVE = "A"
+    BLOCKED = "B"
+
+    COMPANY_STATUS = [
+        (ACTIVE, "active"),
+        (BLOCKED, "blocked")
+    ]
 
     status = models.CharField(max_length=15, choices=COMPANY_STATUS,
                               verbose_name="Статус компании(Активная или Заблокирована)")
-    count_managers = models.IntegerField(verbose_name="Кол - во контактный лиц компании")  # :NOTE: min value
+    count_managers = models.PositiveIntegerField(verbose_name="Кол - во контактный лиц компании")
 
 
 class Purchases(models.Model):
@@ -22,8 +26,8 @@ class Purchases(models.Model):
     id = models.PositiveBigIntegerField(primary_key=True, unique=True, verbose_name="Номер закупки")
     purchase_name = models.CharField(max_length=100, verbose_name="Название закупки", blank=False)
     lot_name = models.CharField(max_length=100, verbose_name="Название лота", blank=False)
-    price = models.IntegerField(verbose_name="Начальная максимальная цена закупки, предложенная заказчиком",
-                                blank=False)  # :NOTE: validate min_value
+    price = models.PositiveIntegerField(verbose_name="Начальная максимальная цена закупки, предложенная заказчиком",
+                                        blank=False)
     customer_inn = models.ForeignKey(to=Companies, on_delete=models.CASCADE,
                                      verbose_name="ИНН заказчика")
     delivery_region = models.CharField(max_length=100, verbose_name="Регион доставки товара")
@@ -36,3 +40,10 @@ class Participants(models.Model):
     supplier_inn = models.ForeignKey(to=Companies, on_delete=models.CASCADE,
                                      verbose_name="ИНН поставщика (участника)")
     is_winner = models.BooleanField(blank=False)
+
+
+class Contracts(models.Model):
+    contract_id = models.ForeignKey(Purchases, on_delete=models.CASCADE, verbose_name="Номер закупки")
+    contract_reg_number = models.CharField(max_length=30, blank=False, verbose_name="Номер регистрации контракта")
+    price = models.PositiveIntegerField(verbose_name="Цена заключенного контракта", blank=False)
+    contract_conclusion_date = models.DateField(verbose_name="Дата заключения контракта", blank=False)
