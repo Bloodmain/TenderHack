@@ -24,13 +24,13 @@ class Purchases(models.Model):
     lot_name = models.CharField(max_length=100, verbose_name="Название лота", blank=False)
     price = models.IntegerField(verbose_name="Начальная максимальная цена закупки, предложенная заказчиком",
                                 blank=False)  # :NOTE: validate min_value
-    customer_inn = models.ForeignKey(Companies.supplier_inn, on_delete=models.CASCADE, verbose_name="ИНН заказчика")
+    customer_inn = models.ForeignKey(to=Companies, related_name="supplier_inn", on_delete=models.CASCADE, verbose_name="ИНН заказчика")
     delivery_region = models.CharField(max_length=100, verbose_name="Регион доставки товара")
     publish_date = models.DateField(verbose_name="Дата публикации закупки")
     contract_category = models.CharField(max_length=100, verbose_name=" Категория контракта(КС или Потребность)")
 
 
 class Participants(models.Model):
-    id = models.ForeignKey(Purchases.id, verbose_name="Номер закупки")
-    supplier_inn = models.ForeignKey(Companies.supplier_inn, verbose_name="ИНН поставщика (участника)")
+    id = models.ForeignKey(Purchases, related_name="id", verbose_name="Номер закупки")
+    supplier_inn = models.ForeignKey(to=Companies, related_name="supplier_inn", on_delete=models.CASCADE, verbose_name="ИНН поставщика (участника)")
     is_winner = models.BooleanField(blank=False)
