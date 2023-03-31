@@ -31,6 +31,6 @@ class Purchases(models.Model):
 
 
 class Participants(models.Model):
-    id = models.ForeignKey(Purchases, related_name="id", verbose_name="Номер закупки")
+    id = models.ForeignKey(Purchases, related_name="id", on_delete=models.CASCADE, verbose_name="Номер закупки")
     supplier_inn = models.ForeignKey(to=Companies, related_name="supplier_inn", on_delete=models.CASCADE, verbose_name="ИНН поставщика (участника)")
     is_winner = models.BooleanField(blank=False)
