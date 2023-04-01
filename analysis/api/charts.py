@@ -1,5 +1,5 @@
 # from analysis.models import *
-import pprint
+# import pprint
 
 
 def get_purchase_charts(purchases):
@@ -28,31 +28,29 @@ def get_purchase_charts(purchases):
                 'regression': False
             }
         ]
-
-    purchases.sort(key=lambda a: -a[0].price)
+    purchases.sort(key=lambda a: a[0].publish_date )
     ret[0]['labels'] = list(map(lambda a: a[0].purchase_name, purchases))
-    ret[0]['chart']['color'][i] = ['' for _ in range(len(purchases))]
+    ret[0]['xName'] = "Закупки"
+    ret[0]['yName'] = "Рубли"
+    ret[0]['chart'][0]['color'] = ['' for _ in range(len(purchases))]
     for i in range(len(purchases)):
-        ret[0]['chart']['color'][i] = 'red' if purchases[i][0].purchase_category else 'blue'
-    ret[0]['chart']['data'] = list(map(lambda a: a[0].prices, purchases))
+        ret[0]['chart'][0]['color'][i] = 'red' if purchases[i][0].contract_category else 'blue'
+    ret[0]['chart'][0]['data'] = list(map(lambda a: a[0].price, purchases))
 
-    purchases.sort(key=lambda a: -sum(map(lambda contract: contract.price, a[1]['contracts'])) if a[1]['is_winner'] else 0)
+    ret[1]['xName'] = "Закупки"
+    ret[1]['yName'] = "Рубли"
     ret[1]['labels'] = list(map(lambda a: a[0].purchase_name, purchases))
-    ret[1]['chart']['color'][i] = ['' for _ in range(len(purchases))]
+    ret[1]['chart'][0]['color'] = ['' for _ in range(len(purchases))]
     for i in range(len(purchases)):
-        ret[1]['chart']['color'][i] = 'red' if purchases[i][0].purchase_category else 'blue'
-    ret[1]['chart']['data'] = list(map(lambda a: sum(map(lambda contract: contract.price, a[1]['contracts'])), purchases))
+        ret[1]['chart'][0]['color'][i] = 'red' if purchases[i][0].contract_category else 'blue'
+    ret[1]['chart'][0]['data'] = list(map(lambda a: sum(map(lambda contract: contract.price, a[1]['contracts'])), purchases))
 
-    purchases.sort(key=lambda a: a[1]['count'])
-    ret[2]['labels'] = []
-    ret[2]['chart']['color'] = []
-    ret[2]['chart']['data'] = []
+    ret[2]['xName'] = "Закупки"
+    ret[2]['yName'] = "Количество поставщиков"
     for i in purchases:
-        if not i[0]['purchase_category']:
-            continue
         ret[2]['labels'].append(i[0].purchase_name)
-        ret[2]['chart']['color'].append('red')
-        ret[2]['chart']['data'].append(i[1]['count'])
+        ret[2]['chart'][0]['color'].append('red')
+        ret[2]['chart'][0]['data'].append(i[1]['count'])
     return ret
 
 
@@ -97,5 +95,6 @@ def get_day_charts(purchases):
 
 
 def make_charts_info(purchases):
-    return [get_day_charts(purchases), get_month_charts(purchases), get_year_charts(purchases),
-            get_purchase_charts(purchases), get_region_charts(purchases)]
+    return [get_purchase_charts(purchases)]
+    # return [get_day_charts(purchases), get_month_charts(purchases), get_year_charts(purchases),
+    #         get_purchase_charts(purchases), get_region_charts(purchases)]

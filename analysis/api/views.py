@@ -1,7 +1,9 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from analysis.models import *
+from analysis.api.charts import make_charts_info
 import datetime
+import pprint
 
 REGIONS = ['Москва', 'Санкт-Петербург', 'Московская', 'Краснодарский', 'Пермский', 'Новороссийск', 'Тюменская',
            'Кемеровская область - Кузбасс', 'Горнозаводск', 'Пермь', 'Ямало-Ненецкий', 'Муравленко', 'Березники',
@@ -37,8 +39,7 @@ class ChartsApi(APIView):
         inn = request.query_params['inn']
         company_tenders = Participants.objects.filter(supplier_inn=inn)
         purchases = []
-        other_data = []
-        for i in range(len(company_tenders)):
+        for i in range(len(company_tenders)): #
             purchas = company_tenders[i].part_id
             if (purchas.category == category or category == 'Все категории') \
                     and self.compareDate(purchas.publish_date, data_start) \
@@ -86,7 +87,10 @@ class ChartsApi(APIView):
                 ]
             }
         ]
-        return Response(data)
+        # print(purchases[0][0].delivery_region)
+        data = make_charts_info(purchases)
+        # pprint.pprint(data[0])
+        return Response(data[0])
 
 
 class Categories(APIView):
