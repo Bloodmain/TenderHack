@@ -38,10 +38,14 @@ def clear(raw):
 def dump_category_map():
     ind = 0
     global words_category, names_category
+    number_set = set()
     for no, name in okpd_pairs:
         if ind % 1000 == 0:
             print(ind)
         no.replace(',', '.')
+        if no in number_set:
+            continue
+        number_set.add(no)
         words = clear(name)
         names_category[no] = len(words)
         for word in words:
@@ -94,6 +98,7 @@ if __name__ == "__main__":
     words_category = dict()
     names_category = dict()
     # dump_category_map()
+    # exit(0)
     load_words_category()
 
     req = f"SELECT id, lot_name FROM {PURCHASES_TABLE}"
@@ -105,6 +110,5 @@ if __name__ == "__main__":
             print(ind, len(purchase_pairs))
         categories_map[purchase_id] = find_category(lot_name)
         ind += 1
-
     with open("categories.json", "w") as categories_file:
         json.dump(categories_map, categories_file)
