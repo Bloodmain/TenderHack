@@ -24,7 +24,6 @@ def loadCompanies(loadToDatabase):
                 continue
             COMPANIES[row['supplier_inn']] = [row] + COMPANIES.get(row['supplier_inn'], [])
 
-        # print(len(COMPANIES))
         if not loadToDatabase:
             return
         request = f""" INSERT INTO {COMPANIES_TABLE} (name, supplier_inn, status, count_managers, okved) VALUES """
@@ -39,6 +38,34 @@ def loadCompanies(loadToDatabase):
         cursor.execute(request)
 
 
+def replace_en_ru(lot_name):
+    letters = { # end - ru
+        "a": "а",
+        "A": "А",
+        "b": "ь",
+        "B": "В",
+        "c": "с",
+        "C": "С",
+        "e": "е",
+        "E": "Е",
+        "p": "р",
+        "P": "Р",
+        "o": "о",
+        "O": "О",
+        "H": "Н",
+        "k": "к",
+        "K": "К",
+        "M": "М",
+        "x": "х",
+        "X": "Х",
+        "T": "Т",
+        "y": "у"
+    }
+    for letter1, letter2 in letters.items():
+        lot_name = lot_name.replace(letter1, letter2)
+    return lot_name
+
+
 def loadPurchases(loadToDatabase):
     with open("csvData/purchases.csv", encoding="utf-8") as file:
         reader = csv.DictReader(file, delimiter=";")
@@ -51,7 +78,7 @@ def loadPurchases(loadToDatabase):
             row['publish_date'] = row['publish_date'].strip().split(' ')[0]
             row['contract_category'] = True if row['contract_category'] == "КС" else False
             row['price'] = int(float(row['price']))
-            row['lot_name'] = row['lot_name'].replace('"', '')
+            row['lot_name'] = replace_en_ru(row['lot_name'].replace('"', ''))
             row['purchase_name'] = row['purchase_name'].replace('"', '')
             row['customer_name'] = row['customer_name'].replace('"', '')
             row['customer_inn'] = int(row['customer_inn'])
@@ -131,7 +158,7 @@ def loadOKPD(loadToDatabase):
 
 COMPANIES = {}
 PURCHASES = {}
-OKPD_TABLES = "analysis_okpd"
+OKPD_TABLE = "analysis_okpd"
 COMPANIES_TABLE = "analysis_companies"
 CONTRACTS_TABLE = "analysis_contracts"
 PURCHASES_TABLE = "analysis_purchases"
