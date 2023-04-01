@@ -37,21 +37,19 @@ class ChartsApi(APIView):
         inn = request.query_params['inn']
         company_tenders = Participants.objects.filter(supplier_inn=inn)
         purchases = []
-        other_data = []
         for i in range(len(company_tenders)):
             purchas = company_tenders[i].part_id
             if (purchas.category == category or category == 'Все категории') \
                     and self.compareDate(purchas.publish_date, data_start) \
                     and self.compareDate(data_end, purchas.publish_date) and \
                     (purchas.delivery_region == region or region == "Все регионы"):
-                purchases.append(purchas)
-                if not purchas.contract_category:
-                    print(purchas.part.count())
-                other_data.append({'contracts': purchas.contract.all(), 'count': purchas.part.count()})
+                purchases.append([purchas, {'contracts': purchas.contract.all(), 'count': purchas.part.count()}])
 
         data = [
             {
                 'title': 'Time',
+                'index':0,
+
                 'type': 'doughnut',
                 'labels': ['1', '2', '3', '4', '5', 'long dick', 'ttt'],
                 'chart': [
