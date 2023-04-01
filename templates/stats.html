@@ -45,29 +45,18 @@
     <br>
     <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
         <div class="carousel-inner">
+
             <div class="carousel-item active">
                 <div class="text-center text-vertical-center">
-                    <h2>Self-statistics</h2>
-                </div>
-                <div class="row justify-content-md-center">
-                    <div class="col col-md-5">
-                        <canvas id="myChart2"></canvas>
-                    </div>
-                </div>
-            </div>
-            <div class="carousel-item">
-                <div class="text-center text-vertical-center">
-                    <h2>Compare-statistics</h2>
+                    <h2>Time</h2>
                 </div>
                 <div class="row justify-content-md-center">
                     <div class="col col-md-5">
                         <canvas id="myChart"></canvas>
                     </div>
-                    <div class="col col-md-5">
-                        <canvas id="myChart3"></canvas>
-                    </div>
                 </div>
             </div>
+
         </div>
         <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls"
                 data-bs-slide="prev">
@@ -83,6 +72,6 @@
 
 {% endblock %}
 {% block scripts %}
-    <script src="{% static 'scripts/charts.js' %}"></script>
+    <script src="{% static 'scripts/newCharts.js' %}"></script>
     <script src="{% static 'scripts/filters.js' %}"></script>
 {% endblock %}

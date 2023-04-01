@@ -13,6 +13,7 @@ const CHART_COLORS = {
 const ctx = document.getElementById('myChart');
 const ctx2 = document.getElementById('myChart2');
 const ctx3 = document.getElementById('myChart3');
+
 const DATA_COUNT = 12;
 const labels = [];
 for (let i = 0; i < DATA_COUNT; ++i) {
@@ -57,44 +58,49 @@ new Chart(ctx, {
         }]
     }
 });
+//
+// new Chart(ctx2, {
+//     type: 'bar',
+//     data: {
+//         labels: ['Red'],
+//         datasets: [{
+//             label: '# of Votes',
+//             data: [12],
+//             borderWidth: 1
+//         }]
+//     },
+//     options: {
+//         scales: {
+//             y: {
+//                 beginAtZero: true
+//             }
+//         }
+//     }
+// });
 
-new Chart(ctx2, {
-    type: 'bar',
-    data: {
-        labels: ['Red'],
-        datasets: [{
-            label: '# of Votes',
-            data: [12],
-            borderWidth: 1
-        }]
-    },
-    options: {
-        scales: {
-            y: {
-                beginAtZero: true
-            }
-        }
-    }
-});
+// data = {
+//     labels: ['hey', 'meow', '34', '24', 'now'],
+//     datasets: [
+//         {
+//             label: 'Dataset 1',
+//             data: [20, 10, 30, 1, 20, 3],
+//             backgroundColor: CHART_COLORS.red,
+//         },
+//         {
+//             label: 'Dataset 2',
+//             data: [5, 10, 2, 0, 32, 7],
+//             backgroundColor: CHART_COLORS.blue,
+//         },
+//         {
+//             label: 'Dataset 3',
+//             data: [5, 10, 2, 0, 32, 7].sort(),
+//             backgroundColor: CHART_COLORS.green,
+//         }
+//     ]
+// };
 
-data = {
-    labels: ['hey', 'meow', '34', '24', 'now'],
-    datasets: [
-        {
-            label: 'Dataset 1',
-            data: [20, 10, 30, 1, 20, 3],
-            borderColor: CHART_COLORS.red,
-        },
-        {
-            label: 'Dataset 2',
-            data: [5, 10, 2, 0, 32, 7],
-            borderColor: CHART_COLORS.blue,
-        }
-    ]
-};
-
-new Chart(ctx3, {
-    type: 'line',
-    data: data
-});
+// new Chart(ctx3, {
+//     type: 'bar',
+//     data: data
+// });
 
