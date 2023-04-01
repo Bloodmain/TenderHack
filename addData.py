@@ -1,6 +1,7 @@
 import csv
 import sqlite3
 import datetime
+from smartCategorizer import trash_chars, fix_name
 
 
 def get_purch_id(id):
@@ -118,10 +119,10 @@ def loadOKPD(loadToDatabase):
         reader = csv.DictReader(file)
         vals = []
         for row in reader:
-            row['Название'] = row['Название'].replace('"', '')
+            row['Название'] = fix_name(row['Название'])
             vals.append(f"""(\"{row['Код']}\", \"{row['Название']}\")""")
         if loadToDatabase:
-            request = f"""INSERT INTO {OKPD_TABLES} (no, name)
+            request = f"""INSERT INTO {OKPD_TABLE} (no, name)
                             VALUES """ + ',\n'.join(vals)
             cursor.execute(request)
 
@@ -129,11 +130,12 @@ def loadOKPD(loadToDatabase):
 def clear_database(database):
     cursor.execute(f"DELETE FROM {database}")
     con.commit()
+    print(f"clear {database}: success")
 
 
 COMPANIES = {}
 PURCHASES = {}
-OKPD_TABLES = "analysis_okpd"
+OKPD_TABLE = "analysis_okpd"
 COMPANIES_TABLE = "analysis_companies"
 CONTRACTS_TABLE = "analysis_contracts"
 PURCHASES_TABLE = "analysis_purchases"
@@ -142,7 +144,8 @@ PARTICIPANTS_TABLE = "analysis_participants"
 if __name__ == '__main__':
     con = sqlite3.connect("db.sqlite3")
     cursor = con.cursor()
-    loadToDatabase = True
+    clear_database(OKPD_TABLE)
+    loadToDatabase = False
     loadCompanies(loadToDatabase)
     print('Companies load: success')
     loadPurchases(loadToDatabase)
@@ -151,7 +154,7 @@ if __name__ == '__main__':
     print('Contracts load: success')
     loadParticipants(loadToDatabase)
     print('Participants load: success')
-    loadOKPD(loadToDatabase)
+    loadOKPD(True)
     print('OKPD load: success')
     con.commit()
     con.close()
