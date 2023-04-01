@@ -1,14 +1,4 @@
-$(document).ready(() => $('.carousel').carousel().on('slide.bs.carousel', function (e) {
-    let to = $(e.relatedTarget);
-    let nextHeight = to.height();
-    for (let el in e.relatedTarget) {
-        console.log(el);
-    }
-    console.log(e.relatedTarget.offsetHeight)
-    $(this).find('.active.carousel-item').parent().animate({
-        height: nextHeight
-    }, 700);
-}));
+$(document).ready(() => $('.carousel').carousel());
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * max);
@@ -83,8 +73,16 @@ function update_charts(data) {
                 },
                 legend: {
                     display: show_legend
+                },
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
                 }
             }
         }));
+
     }
 }
