@@ -78,6 +78,16 @@ function update_charts(data) {
                     yAxes: [{
                         ticks: {
                             beginAtZero: true
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: chart.yName
+                        }
+                    }],
+                    xAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: chart.xName
                         }
                     }]
                 }
