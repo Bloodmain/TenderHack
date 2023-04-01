@@ -30,18 +30,18 @@ def get_purchase_charts(purchases):
         ]
 
     purchases.sort(key=lambda a: -a[0].price)
-    ret[0]['labels'] = list(map(lambda a: a[0].purchase_name, purchases))
-    ret[0]['chart']['color'][i] = ['' for _ in range(len(purchases))]
+    ret[0]['labels'] = [ a[0].purchase_name for a in purchases ]
+    ret[0]['chart']['color'][i] = [''] * len(purchases)
     for i in range(len(purchases)):
         ret[0]['chart']['color'][i] = 'red' if purchases[i][0].purchase_category else 'blue'
-    ret[0]['chart']['data'] = list(map(lambda a: a[0].prices, purchases))
+    ret[0]['chart']['data'] = [ a[0].prices for a in purchases ]
 
-    purchases.sort(key=lambda a: -sum(map(lambda contract: contract.price, a[1]['contracts'])) if a[1]['is_winner'] else 0)
-    ret[1]['labels'] = list(map(lambda a: a[0].purchase_name, purchases))
-    ret[1]['chart']['color'][i] = ['' for _ in range(len(purchases))]
+    purchases.sort(key=lambda a: -sum(contract.price for contact in a[1]['contracts']) if a[1]['is_winner'] else 0)
+    ret[1]['labels'] = [ a[0].purchase_name for a in purchases ]
+    ret[1]['chart']['color'][i] = [''] * len(purchases)
     for i in range(len(purchases)):
         ret[1]['chart']['color'][i] = 'red' if purchases[i][0].purchase_category else 'blue'
-    ret[1]['chart']['data'] = list(map(lambda a: sum(map(lambda contract: contract.price, a[1]['contracts'])), purchases))
+    ret[1]['chart']['data'] = [ sum(contract.price for contact in a[1]['contracts']) for a in purchases ]
 
     purchases.sort(key=lambda a: a[1]['count'])
     ret[2]['labels'] = []
