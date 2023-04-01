@@ -74,6 +74,13 @@ function update_charts(data) {
                 legend: {
                     display: show_legend
                 },
+                tooltips: {
+                    callbacks: {
+                        label: function (tooltipItem) {
+                            return tooltipItem.yLabel;
+                        }
+                    }
+                },
                 scales: {
                     yAxes: [{
                         ticks: {
@@ -85,6 +92,7 @@ function update_charts(data) {
                         }
                     }],
                     xAxes: [{
+                        display: false,
                         scaleLabel: {
                             display: true,
                             labelString: chart.xName
