@@ -1,4 +1,14 @@
-$(document).ready(() => $('.carousel').carousel());
+$(document).ready(() => $('.carousel').carousel().on('slide.bs.carousel', function (e) {
+    let to = $(e.relatedTarget);
+    let nextHeight = to.height();
+    for (let el in e.relatedTarget) {
+        console.log(el);
+    }
+    console.log(e.relatedTarget.offsetHeight)
+    $(this).find('.active.carousel-item').parent().animate({
+        height: nextHeight
+    }, 700);
+}));
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * max);
@@ -20,19 +30,24 @@ let ctxs = []
 function update_charts(data) {
     let carousel = $('.carousel-inner');
     carousel.empty()
+    let itemInd = 0;
     for (let i = 0; i < data.length; ++i) {
         let chart = data[i];
         let dataCfg = {
             labels: chart.labels,
             datasets: []
         }
+        let show_legend = true;
         for (let dataset of chart.chart) {
             dataCfg.datasets.push({
                 label: dataset.line_label,
                 data: dataset.data,
                 borderWidth: 1,
-                backgroundColor: CHART_COLORS[dataset.color],
+                backgroundColor: dataset.color.map((el) => CHART_COLORS[el])
             });
+            if (dataset.line_label === '') {
+                show_legend = false;
+            }
             if (chart.type === 'pie' || chart.type === 'doughnut') {
                 let randomColours = [];
                 for (let j = 0; j < dataset.data.length; ++j) {
@@ -42,24 +57,34 @@ function update_charts(data) {
                 console.log(randomColours)
             }
         }
-        // console.log(data);
         let title = chart.title;
-        carousel.append("<div class=\"carousel-item" + (i === 0 ? " active" : "") + "\">\n" +
-            "                <div class=\"text-center text-vertical-center\">\n" +
-            "                    <h2>" + title + "</h2>\n" +
-            "                </div>\n" +
-            "                <div class=\"row justify-content-md-center\">\n" +
-            "                    <div class=\"col col-md-5\">\n" +
-            "                        <canvas id=\"chart" + i + "\"></canvas>\n" +
-            "                    </div>\n" +
-            "                </div>\n" +
-            "            </div>");
+        let item =
+            "           <div class=\"col col-md-5\">\n" +
+            "               <canvas id=\"chart" + i + "\"></canvas>\n" +
+            "           </div>\n"
+        if (!chart.concat || i === 0) {
+            item = "<div class=\"carousel-item" + (i === 0 ? " active item-ind" : " item-ind") + itemInd++ + "\">\n" +
+                "<div class=\"row justify-content-md-center\">" + item + "</div></div>\n";
+            carousel.append(item);
+        } else {
+            carousel.children().children().last().append(item);
+        }
 
         ctxs.push(document.getElementById('chart' + i))
         console.log()
         charts.push(new Chart(ctxs.at(-1), {
             type: chart.type,
-            data: dataCfg
+            data: dataCfg,
+            options: {
+                title: {
+                    display: true,
+                    text: title,
+                    fontSize: 25
+                },
+                legend: {
+                    display: show_legend
+                }
+            }
         }));
     }
 }
