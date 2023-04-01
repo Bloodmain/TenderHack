@@ -53,13 +53,11 @@ class ChartsApi(APIView):
         data = [
             {
                 'title': 'Time',
-                'index':0,
-
-                'type': 'doughnut',
-                'labels': ['1', '2', '3', '4', '5', 'long dick', 'ttt'],
+                'type': 'bar',
+                'labels': ['1', '2', '3', '4', '5', '6', '7'],
                 'chart': [
                     {
-                        'color': 'red',
+                        'color': ['red', 'red', 'red', 'red', 'red', 'red', 'red'],
                         'line_label': 'time_label',
                         'data': [123, 3, 12, 33, 98, 100, 23],
                         'regression': False
@@ -68,23 +66,80 @@ class ChartsApi(APIView):
             },
             {
                 'title': 'Segments',
+                'concat': True,
                 'type': 'bar',
                 'labels': ['1', '2', '3', '4', '5', '6', '7'],
                 'chart': [
                     {
-                        'color': 'blue',
-                        'line_label': 'seg1_label',
+                        'color': ['blue', 'blue', 'blue', 'blue', 'blue', 'blue', 'blue'],
+                        'line_label': '',
                         'data': [1, 2, 3, 4, 5, 6, 1],
                         'regression': False
                     },
                     {
-                        'color': 'green',
+                        'color': ['red', 'red', 'red', 'red', 'red', 'red', 'red'],
                         'line_label': 'seg2_label',
                         'data': [10, 3, 12, 39, 48, 55, 10],
                         'regression': False
                     }
                 ]
-            }
+            },
+            {
+                'title': 'NoTime',
+                'concat': True,
+                'type': 'bar',
+                'labels': ['1', '2', '3', '4', '5', '6', '7'],
+                'chart': [
+                    {
+                        'color': ['red', 'red', 'red', 'red', 'red', 'red', 'red'],
+                        'line_label': '',
+                        'data': [123, 3, 12, 33, 98, 100, 23],
+                        'regression': False
+                    }
+                ]
+            },
+            {
+                'title': 'NoTime',
+                'concat': True,
+                'type': 'bar',
+                'labels': ['1', '2', '3', '4', '5', '6', '7'],
+                'chart': [
+                    {
+                        'color': ['red', 'red', 'red', 'red', 'red', 'red', 'red'],
+                        'line_label': 'time_label',
+                        'data': [123, 3, 12, 33, 98, 100, 23],
+                        'regression': False
+                    }
+                ]
+            },
+            {
+                'title': 'NoTime',
+                'concat': True,
+                'type': 'bar',
+                'labels': ['1', '2', '3', '4', '5', '6', '7'],
+                'chart': [
+                    {
+                        'color': ['red', 'red', 'red', 'red', 'red', 'red', 'red'],
+                        'line_label': 'time_label',
+                        'data': [123, 3, 12, 33, 98, 100, 23],
+                        'regression': False
+                    }
+                ]
+            },
+            {
+                'title': 'NoTime',
+                'concat': False,
+                'type': 'bar',
+                'labels': ['1', '2', '3', '4', '5', '6', '7'],
+                'chart': [
+                    {
+                        'color': ['red', 'red', 'red', 'red', 'red', 'red', 'red'],
+                        'line_label': 'time_label',
+                        'data': [123, 3, 12, 33, 98, 100, 23],
+                        'regression': False
+                    }
+                ]
+            },
         ]
         return Response(data)
 
