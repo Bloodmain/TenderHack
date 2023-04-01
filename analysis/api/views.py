@@ -52,11 +52,12 @@ class ChartsApi(APIView):
         data = [
             {
                 'title': 'Time',
+                'concat': False,
                 'type': 'doughnut',
                 'labels': ['1', '2', '3', '4', '5', 'long dick', 'ttt'],
                 'chart': [
                     {
-                        'color': 'red',
+                        'color': ['red'],
                         'line_label': 'time_label',
                         'data': [123, 3, 12, 33, 98, 100, 23],
                         'regression': False
