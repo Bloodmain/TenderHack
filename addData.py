@@ -16,7 +16,7 @@ def normalization_company_data(company):
 
 
 def get_purch_id(id):
-    return id.split('_')[0]
+    return id.split('_')[1]
 
 
 def company_from_companies(companies):
@@ -36,14 +36,14 @@ def loadCompanies(loadToDatabase=True):
 
         if not loadToDatabase:
             return
-        request = f""" INSERT INTO {COMPANIES_TABLE} (name, supplier_inn, status, count_managers) VALUES """
+        request = f""" INSERT INTO {COMPANIES_TABLE} (name, supplier_inn, status, count_managers, okved) VALUES """
         vals = []
         for inn, companies in COMPANIES.items():
             company = company_from_companies(companies)
             company['status'] = "active" if company['status'] == "Активная" else 'blocked'
             company['name'] = company['name'].replace('"', '')
             vals.append(
-                f"""(\"{company['name']}\", \"{company['supplier_inn']}\", \"{company['status']}\", \"{company['count_managers']}\")""")
+                f"""(\"{company['name']}\", \"{company['supplier_inn']}\", \"{company['status']}\", \"{company['count_managers']}\", \"{company['okved']}\")""")
         request = request + ',\n'.join(vals)
         cursor.execute(request)
 
@@ -53,7 +53,6 @@ def loadPurchases(loadToDatabase=True):
         reader = csv.DictReader(file, delimiter=";")
         vals = []
         for row in reader:
-            print(row['purchase_name'])
             if row['customer_inn'] not in COMPANIES:
                 continue
             row['id'] = int(get_purch_id(row['id']))
@@ -70,12 +69,12 @@ def loadPurchases(loadToDatabase=True):
             row['purchase_name'] = row['purchase_name'].replace('"', '')
             row['customer_inn'] = int(row['customer_inn'])
             vals.append(
-                f"""(\"{row['id']}\", \"{row['purchase_name']}\", \"{row['lot_name']}\", \"{row['price']}\", 
+                f"""(\"\", \"\" ,\"{row['id']}\", \"{row['purchase_name']}\", \"{row['lot_name']}\", \"{row['price']}\", 
                 \"{row['delivery_region']}\", \"{row['customer_inn']}\", \"{row['publish_date']}\", 
                 \"{row['contract_category']}\")""")
         if loadToDatabase:
             request = f"""
-                    INSERT INTO {PURCHASES_TABLE} (id, purchase_name, lot_name, price, delivery_region, customer_inn_id, publish_date, contract_category)
+                    INSERT INTO {PURCHASES_TABLE} (vector, purchase_name_end, id, purchase_name, lot_name, price, delivery_region, customer_inn_id, publish_date, contract_category)
                     VALUES
                     """
             request = request + ',\n'.join(vals)
@@ -91,8 +90,8 @@ def loadContracts(loadToDatabase=True):
             row['id'] = int(get_purch_id(row['id']))
             if row['id'] not in PURCHASES:
                 continue
-            date1 = datetime.date(row['contract_conclusion_date'])
-            date2 = datetime.date(PURCHASES[row['id']]['publish_date'].split(' ')[0])
+            date1 = datetime.date(*list(map(int, row['contract_conclusion_date'].split('-'))))
+            date2 = datetime.date(*list(map(int, PURCHASES[row['id']]['publish_date'].split(' ')[0].split('-'))))
             if date1 < date2:
                 row['contract_conclusion_date'] = PURCHASES[row['id']]['publish_date'].split(' ')[0]
             row['price'] = int(float(row['price']))
@@ -112,7 +111,7 @@ def loadParticipants(loadToDatabase=True):
         reader = csv.DictReader(file, delimiter=";")
         vals = []
         for row in reader:
-            row['supplier_inn'] = int(row['supplier_inn'])
+            row['supplier_inn'] = row['supplier_inn']
             row['id'] = int(get_purch_id(row['id']))
             if row['supplier_inn'] not in COMPANIES or row['id'] not in PURCHASES:
                 continue
@@ -120,7 +119,7 @@ def loadParticipants(loadToDatabase=True):
             vals.append(f"(\"{row['supplier_inn']}\", \"{row['id']}\", \"{row['is_winner']}\")")
         if loadToDatabase:
             request = f"""
-                        INSERT INTO {PARTICIPANTS_TABLE} (contract_reg_number, contract_id_id, price, contract_conclusion_date)
+                        INSERT INTO {PARTICIPANTS_TABLE} (supplier_inn_id, part_id_id, is_winner)
                         VALUES
                         """
             request = request + ',\n'.join(vals)
@@ -137,9 +136,14 @@ PARTICIPANTS_TABLE = "analysis_participants"
 if __name__ == '__main__':
     con = sqlite3.connect("db.sqlite3")
     cursor = con.cursor()
-    # loadCompanies(False)
-    loadPurchases(False)
-    # loadContracts(False)
-    # loadParticipants(False)
+    loadCompanies(True)
+    print('Companies load: success')
+    loadPurchases(True)
+    print('Purchases load: success')
+    loadContracts(True)
+    print('Contracts load: success')
+    loadParticipants(True)
+    print('Participants load: success')
     con.commit()
     con.close()
+    print('All success')
