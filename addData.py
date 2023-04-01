@@ -117,17 +117,18 @@ def loadOKPD(loadToDatabase):
     with open("csvData/okpd.csv", encoding="utf-8") as file:
         reader = csv.DictReader(file)
         vals = []
-        trash_chars = ['"', '-', ':', '(', ')', '_', '.']
         for row in reader:
-            row_name = row['Название'].lower()
-            for trash_char in trash_chars:
-                row_name = row_name.replace(trash_char, '')
-            row['Название'] = row_name
+            row['Название'] = row['Название'].replace('"', '')
             vals.append(f"""(\"{row['Код']}\", \"{row['Название']}\")""")
         if loadToDatabase:
             request = f"""INSERT INTO {OKPD_TABLES} (no, name)
                             VALUES """ + ',\n'.join(vals)
             cursor.execute(request)
+
+
+def clear_database(database):
+    cursor.execute(f"DELETE FROM {database}")
+    con.commit()
 
 
 COMPANIES = {}
@@ -137,7 +138,6 @@ COMPANIES_TABLE = "analysis_companies"
 CONTRACTS_TABLE = "analysis_contracts"
 PURCHASES_TABLE = "analysis_purchases"
 PARTICIPANTS_TABLE = "analysis_participants"
-
 
 if __name__ == '__main__':
     con = sqlite3.connect("db.sqlite3")
