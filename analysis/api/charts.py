@@ -37,7 +37,7 @@ def get_purchase_charts(purchases):
         ret[0]['chart'][0]['color'][i] = 'red' if purchases[i][0].purchase_category else 'blue'
     ret[0]['chart'][0]['data'] = [ a[0].prices for a in purchases ]
 
-    purchases.sort(key=lambda a: -sum(contract.price for contact in a[1]['contracts']) if a[1]['is_winner'] else 0)
+    purchases.sort(key=lambda a: -sum(contract.price for contract in a[1]['contracts']) if a[1]['is_winner'] else 0)
     ret[1]['labels'] = [ a[0].purchase_name for a in purchases ]
     ret[1]['chart'][0]['color'][i] = [''] * len(purchases)
     for i in range(len(purchases)):
