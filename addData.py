@@ -3,18 +3,6 @@ import sqlite3
 import datetime
 
 
-def normalization_company_data(company):
-    equals_strings = [
-        ["ooo", "oбщество с ограниченной ответственностью"],
-        ["роу", "региональное общественное учреждение"],
-        ["ао", "акционерное общество"]
-    ]
-
-    for s1, s2 in equals_strings:
-        company['name'] = company['name'].lower().replace(s2, s1)
-    return company
-
-
 def get_purch_id(id):
     return id.split('_')[1]
 
@@ -69,12 +57,12 @@ def loadPurchases(loadToDatabase=True):
             row['purchase_name'] = row['purchase_name'].replace('"', '')
             row['customer_inn'] = int(row['customer_inn'])
             vals.append(
-                f"""(\"\", \"\" ,\"{row['id']}\", \"{row['purchase_name']}\", \"{row['lot_name']}\", \"{row['price']}\", 
+                f"""(\"{row['id']}\", \"{row['purchase_name']}\", \"{row['lot_name']}\", \"{row['price']}\", 
                 \"{row['delivery_region']}\", \"{row['customer_inn']}\", \"{row['publish_date']}\", 
                 \"{row['contract_category']}\")""")
         if loadToDatabase:
             request = f"""
-                    INSERT INTO {PURCHASES_TABLE} (vector, purchase_name_end, id, purchase_name, lot_name, price, delivery_region, customer_inn_id, publish_date, contract_category)
+                    INSERT INTO {PURCHASES_TABLE} (id, purchase_name, lot_name, price, delivery_region, customer_inn_id, publish_date, contract_category)
                     VALUES
                     """
             request = request + ',\n'.join(vals)
@@ -85,7 +73,6 @@ def loadContracts(loadToDatabase=True):
     with open("csvData/contracts.csv", encoding="utf-8") as file:
         reader = csv.DictReader(file, delimiter=";")
         vals = []
-        cnt = 0
         for row in reader:
             row['id'] = int(get_purch_id(row['id']))
             if row['id'] not in PURCHASES:
@@ -133,16 +120,18 @@ CONTRACTS_TABLE = "analysis_contracts"
 PURCHASES_TABLE = "analysis_purchases"
 PARTICIPANTS_TABLE = "analysis_participants"
 
+
 if __name__ == '__main__':
     con = sqlite3.connect("db.sqlite3")
     cursor = con.cursor()
-    loadCompanies(True)
+    loadToDatabase = True
+    loadCompanies(loadToDatabase)
     print('Companies load: success')
-    loadPurchases(True)
+    loadPurchases(loadToDatabase)
     print('Purchases load: success')
-    loadContracts(True)
+    loadContracts(loadToDatabase)
     print('Contracts load: success')
-    loadParticipants(True)
+    loadParticipants(loadToDatabase)
     print('Participants load: success')
     con.commit()
     con.close()

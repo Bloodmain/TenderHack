@@ -1,8 +1,9 @@
 from django.db import models
 
-
 # Create your models here.
 MAX_LENGTH = 200
+
+
 class Companies(models.Model):
     name = models.CharField(max_length=MAX_LENGTH, verbose_name="Название компании")
     supplier_inn = models.PositiveBigIntegerField(verbose_name="ИНН компании", unique=True, primary_key=True)
@@ -25,11 +26,12 @@ class Purchases(models.Model):
     # :NOTE: max_length for char field
     id = models.PositiveBigIntegerField(primary_key=True, unique=True, verbose_name="Номер закупки")
     purchase_name = models.CharField(max_length=MAX_LENGTH, verbose_name="Название закупки", blank=False)
-    purchase_name_end = models.CharField(max_length=MAX_LENGTH, default="")
+    purchase_name_end = models.CharField(max_length=MAX_LENGTH, default="", null=True)
     lot_name = models.CharField(max_length=MAX_LENGTH, verbose_name="Название лота", blank=False)
+    category = models.CharField(max_length=400, verbose_name="Категории", default="", null=True)
     price = models.PositiveIntegerField(verbose_name="Начальная максимальная цена закупки, предложенная заказчиком",
                                         blank=False)
-    vector = models.BinaryField(default=bytes(0))
+    vector = models.BinaryField(default=bytes(0), null=True)
     customer_inn = models.ForeignKey(to=Companies, on_delete=models.CASCADE,
                                      verbose_name="ИНН заказчика")
     delivery_region = models.CharField(max_length=MAX_LENGTH, verbose_name="Регион доставки товара")
@@ -49,3 +51,8 @@ class Contracts(models.Model):
     contract_reg_number = models.CharField(max_length=30, blank=False, verbose_name="Номер регистрации контракта")
     price = models.PositiveIntegerField(verbose_name="Цена заключенного контракта", blank=False)
     contract_conclusion_date = models.DateField(verbose_name="Дата заключения контракта", blank=False)
+
+
+class OKPD(models.Model):
+    no = models.CharField(max_length=20)
+    name = models.CharField(max_length=MAX_LENGTH)
