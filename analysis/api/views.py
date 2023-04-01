@@ -53,6 +53,8 @@ class ChartsApi(APIView):
         data = [
             {
                 'title': 'Time',
+                'xName': 'sdf',
+                'yName': 'sdv',
                 'type': 'bar',
                 'labels': ['1', '2', '3', '4', '5', '6', '7'],
                 'chart': [
@@ -66,6 +68,8 @@ class ChartsApi(APIView):
             },
             {
                 'title': 'Segments',
+                'xName': 'sdf',
+                'yName': 'sdv',
                 'concat': True,
                 'type': 'bar',
                 'labels': ['1', '2', '3', '4', '5', '6', '7'],
@@ -87,6 +91,8 @@ class ChartsApi(APIView):
             {
                 'title': 'NoTime',
                 'concat': True,
+                'xName': 'sdf',
+                'yName': 'sdv',
                 'type': 'bar',
                 'labels': ['1', '2', '3', '4', '5', '6', '7'],
                 'chart': [
@@ -101,6 +107,8 @@ class ChartsApi(APIView):
             {
                 'title': 'NoTime',
                 'concat': True,
+                'xName': 'sdf',
+                'yName': 'sdv',
                 'type': 'bar',
                 'labels': ['1', '2', '3', '4', '5', '6', '7'],
                 'chart': [
@@ -115,6 +123,8 @@ class ChartsApi(APIView):
             {
                 'title': 'NoTime',
                 'concat': True,
+                'xName': 'sdf',
+                'yName': 'sdv',
                 'type': 'bar',
                 'labels': ['1', '2', '3', '4', '5', '6', '7'],
                 'chart': [
@@ -129,6 +139,8 @@ class ChartsApi(APIView):
             {
                 'title': 'NoTime',
                 'concat': False,
+                'xName': 'sdf',
+                'yName': 'sdv',
                 'type': 'bar',
                 'labels': ['1', '2', '3', '4', '5', '6', '7'],
                 'chart': [
