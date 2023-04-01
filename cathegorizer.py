@@ -30,13 +30,6 @@ OKPD_TABLE = "analysis_okpd"
 trash_words = ["поставка", "закупка", "оказание", "выполнение"]
 trash_chars = ['"', '-', ':', '(', ')', '_', '.']
 
-
-# cur.execute(f"DELETE FROM {COMPANIES_TABLE}")
-# cur.execute(f"DELETE FROM {CONTRACTS_TABLE}")
-# cur.execute(f"DELETE FROM {PURCHASES_TABLE}")
-# cur.execute(f"DELETE FROM {PARTICIPANTS_TABLE}")
-# cur.execute(f"DELETE FROM {OKPD_TABLE}")
-# exit(0)
 def check_category(purchase_name):
     purchase_tokens = clear(purchase_name)
     for trash_word in trash_words:
