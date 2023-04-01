@@ -6,3 +6,9 @@ class ChartsApi(APIView):
     def get(self, request, *args, **kwargs):
         data = [{'id': 1, "name": "Valera"}, {'id': 2, "name": "Anton"}]
         return Response(data)
+
+
+class Categories(APIView):
+    def get(self, request, *args, **kwargs):
+        data = [{'categories': ["Seeds", "melons", "weapons", "nuclear"]}]
+        return Response(data)

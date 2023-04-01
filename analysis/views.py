@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from .forms import CompanyForm
 from .models import Companies
 
@@ -6,7 +6,6 @@ from .models import Companies
 def homepage(request):
     form = CompanyForm(request.POST or None)
     if request.method == 'POST':
-        print('EEEE')
         if form.is_valid():
             inn = form.cleaned_data["inn"]
             if Companies.objects.filter(pk=inn).count():

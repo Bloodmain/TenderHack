@@ -4,9 +4,40 @@
 {% block title %} Statistics {% endblock %}
 
 {% block content %}
+    <div class="text-center text-vertical-center">
+        <h2>Filters</h2>
+    </div>
+    <div class="row justify-content-md-left">
+        <div class="col col-md-3"><span>Categories:</span></div>
+        <div class="col col-md-3"><span>From:</span></div>
+        <div class="col col-md-3"><span>Till:</span></div>
+    </div>
+    <div class="row justify-content-md-left">
+        <div class="col col-sm-3">
+            <input type="text" class="form-control" placeholder="Category" list="list-categories"
+                   id="categories-datalist" value="All">
+            <datalist id="list-categories">
+                <option>All</option>
+            </datalist>
+
+        </div>
+        <div class="col col-sm-3">
+            <input type="date" id="dateStart" class="dateInput" value="1970-01-01">
+        </div>
+        <div class="col col-sm-3">
+            <input type="date" id="dateEnd" class="dateInput">
+        </div>
+        <div class="col col-sm-2">
+            <button type="button" class="btn btn-danger" name="applyFilters">Apply</button>
+        </div>
+    </div>
+    <br>
     <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
         <div class="carousel-inner">
             <div class="carousel-item active">
+                <div class="text-center text-vertical-center">
+                    <h2>Self-statistics</h2>
+                </div>
                 <div class="row justify-content-md-center">
                     <div class="col col-md-5">
                         <canvas id="myChart2"></canvas>
@@ -14,6 +45,9 @@
                 </div>
             </div>
             <div class="carousel-item">
+                <div class="text-center text-vertical-center">
+                    <h2>Compare-statistics</h2>
+                </div>
                 <div class="row justify-content-md-center">
                     <div class="col col-md-5">
                         <canvas id="myChart"></canvas>
@@ -38,5 +72,6 @@
 
 {% endblock %}
 {% block scripts %}
-    <script src="{% static 'scripts/stats.js' %}"></script>
+    <script src="{% static 'scripts/charts.js' %}"></script>
+    <script src="{% static 'scripts/filters.js' %}"></script>
 {% endblock %}
