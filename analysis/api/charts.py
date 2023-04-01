@@ -34,7 +34,10 @@ def get_purchase_charts(purchases):
     ret[0]['yName'] = "Рубли"
     ret[0]['chart'][0]['color'] = ['' for _ in range(len(purchases))]
     for i in range(len(purchases)):
-        ret[0]['chart'][0]['color'][i] = 'red' if purchases[i][0].contract_category else 'blue'
+        if purchases[i][0].contract_category:
+            ret[0]['chart'][0]['color'][i] = 'blue'
+        else:
+            ret[0]['chart'][0]['color'][i] = 'red'
     ret[0]['chart'][0]['data'] = list(map(lambda a: a[0].price, purchases))
 
     ret[1]['xName'] = "Закупки"
@@ -42,7 +45,10 @@ def get_purchase_charts(purchases):
     ret[1]['labels'] = list(map(lambda a: a[0].purchase_name, purchases))
     ret[1]['chart'][0]['color'] = ['' for _ in range(len(purchases))]
     for i in range(len(purchases)):
-        ret[1]['chart'][0]['color'][i] = 'red' if purchases[i][0].contract_category else 'blue'
+        if purchases[i][0].contract_category:
+            ret[0]['chart'][0]['color'][i] = 'blue'
+        else:
+            ret[0]['chart'][0]['color'][i] = 'red'
     ret[1]['chart'][0]['data'] = list(map(lambda a: sum(map(lambda contract: contract.price, a[1]['contracts'])), purchases))
 
     ret[2]['xName'] = "Закупки"
@@ -55,13 +61,46 @@ def get_purchase_charts(purchases):
 
 
 def get_region_charts(purchases):
-    ret = {
-        'title': 'sex',
-        'index': 4,
-        'type': 'bar',
-        'labels': [],
-        'chart': []
-    }
+    ret = [
+        {
+            'title': 'Максимальная начальная цена',
+            'concat': False,
+        },
+        {
+            'title': 'Финальная цена',
+            'concat': True,
+        }
+    ]
+    for i in ret:
+        i['type'] = 'doughnut'
+        i['labels'] = []
+        i['chart'] = [
+            {
+                'color': [],
+                'line_label': '',
+                'data': [],
+                'regression': False
+            }
+        ]
+    region_info = {}
+    for i in purchases:
+        region = i[0].publish_region
+        if region not in region_info:
+            region_info[region] = [0, 0]
+        region_info[region][0] += i[0].price
+        region_info[region][1] += sum([contract.price for contract in i[1]["contracts"]])
+    purchases.sort(key=lambda a: region_info[a[0].publish_region][1])
+    ret[0]['labels'] = list(map(lambda a: a, region_info.keys()))
+    ret[0]['xName'] = "Регионы"
+    ret[0]['yName'] = "Рубли"
+    ret[0]['chart'][0]['color'] = ['blue' for _ in range(len(purchases))]
+    ret[0]['chart'][0]['data'] = list(map(lambda a: region_info[a][0], region_info.keys()))
+
+    ret[1]['xName'] = "Регионы"
+    ret[1]['yName'] = "Рубли"
+    ret[1]['labels'] = list(map(lambda a: a, region_info.keys()))
+    ret[1]['chart'][0]['color'] = ['' for _ in range(len(purchases))]
+    ret[1]['chart'][0]['data'] = list(map(lambda a: region_info[a][1], region_info.keys()))
 
 
 def get_year_charts(purchases):
@@ -75,16 +114,6 @@ def get_year_charts(purchases):
 
 
 def get_month_charts(purchases):
-    ret = {
-        'title': 'sex',
-        'index': 4,
-        'type': 'bar',
-        'labels': [],
-        'chart': []
-    }
-
-
-def get_day_charts(purchases):
     ret = {
         'title': 'sex',
         'index': 4,
