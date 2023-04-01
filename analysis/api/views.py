@@ -37,6 +37,7 @@ class ChartsApi(APIView):
         inn = request.query_params['inn']
         company_tenders = Participants.objects.filter(supplier_inn=inn)
         purchases = []
+        other_data = []
         for i in range(len(company_tenders)):
             purchas = company_tenders[i].part_id
             if (purchas.category == category or category == 'Все категории') \
@@ -53,13 +54,12 @@ class ChartsApi(APIView):
         data = [
             {
                 'title': 'Time',
-                'index':0,
-
+                'concat': False,
                 'type': 'doughnut',
                 'labels': ['1', '2', '3', '4', '5', 'long dick', 'ttt'],
                 'chart': [
                     {
-                        'color': 'red',
+                        'color': ['red'],
                         'line_label': 'time_label',
                         'data': [123, 3, 12, 33, 98, 100, 23],
                         'regression': False
