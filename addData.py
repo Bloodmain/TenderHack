@@ -151,7 +151,7 @@ def loadOKPD(loadToDatabase):
             row['Название'] = row['Название'].replace('"', '')
             vals.append(f"""(\"{row['Код']}\", \"{row['Название']}\")""")
         if loadToDatabase:
-            request = f"""INSERT INTO {OKPD_TABLES} (no, name)
+            request = f"""INSERT INTO {OKPD_TABLE} (no, name)
                             VALUES """ + ',\n'.join(vals)
             cursor.execute(request)
 
@@ -168,6 +168,7 @@ PARTICIPANTS_TABLE = "analysis_participants"
 if __name__ == '__main__':
     con = sqlite3.connect("db.sqlite3")
     cursor = con.cursor()
+
     loadToDatabase = True
     loadCompanies(loadToDatabase)
     print('Companies load: success')
