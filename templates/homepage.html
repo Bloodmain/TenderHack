@@ -4,18 +4,34 @@
 {% block title %} GenericSite {% endblock %}
 
 {% block content %}
+    <div class="row justify-content-sm-center mt-5">
+        <div class="col-md-10">
+            <div>
+                <Transition>
+                    <form method="post">
+                        {% csrf_token %}
+                        <h2 class="text-center text-vertical-center">{{ form.title }}</h2>
+                        {% for field in form %}
+                            <div class="row">
+                                <div class="col mt-3 mb-2">
+                                    <label>{{ field.label }}</label>
+                                    {{ field }}
+                                    {{ field.errors }}
+                                </div>
+                            </div>
+                        {% endfor %}
+                        <div class="row">
+                            <div class="col mt-3 mb-2">
+                                <div class="col mt-2 mb-2">
+                                    <input type="submit" value="Смотреть статистику">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
 
-    <form>
-        <h2 class="text-center text-vertical-center">{{ form.title }}</h2>
-        {% for field in form %}
-            <div class="row">
-                <div class="col mt-3 mb-2">
-                    <label>{{ field.label }}</label>
-                    {{ field }}
-                    {{ field.errors }}
-                </div>
+                </Transition>
             </div>
-        {% endfor %}
-    </form>
+        </div>
+    </div>
 
 {% endblock %}
