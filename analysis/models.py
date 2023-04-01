@@ -6,8 +6,7 @@ MAX_LENGTH = 200
 class Companies(models.Model):
     name = models.CharField(max_length=MAX_LENGTH, verbose_name="Название компании")
     supplier_inn = models.PositiveBigIntegerField(verbose_name="ИНН компании", unique=True, primary_key=True)
-    supplier_kpp = models.PositiveBigIntegerField(verbose_name="КПП компании", unique=True)
-    okved = models.CharField(max_length=MAX_LENGTH, verbose_name="Номера ОКВЭД компании")
+    okved = models.CharField(max_length=MAX_LENGTH, verbose_name="Номера ОКВЭД компании", default="")
 
     ACTIVE = "A"
     BLOCKED = "B"
