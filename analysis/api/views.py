@@ -43,7 +43,12 @@ class ChartsApi(APIView):
                     and self.compareDate(purchas.publish_date, data_start) \
                     and self.compareDate(data_end, purchas.publish_date) and \
                     (purchas.delivery_region == region or region == "Все регионы"):
-                purchases.append([purchas, {'contracts': purchas.contract.all(), 'count': purchas.part.count()}])
+                purchases.append([purchas,
+                                  {
+                                    'contracts': purchas.contract.all(),
+                                    'count': purchas.part.count(),
+                                    'is_winner': company_tenders[i].is_winner
+                                  }])
 
         data = [
             {
