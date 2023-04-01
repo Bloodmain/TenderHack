@@ -15,7 +15,7 @@ def company_from_companies(companies):
     return res
 
 
-def loadCompanies(loadToDatabase=True):
+def loadCompanies(loadToDatabase):
     with open("csvData/companies.csv", encoding="utf-8") as file:
         reader = csv.DictReader(file, delimiter=";")
         for row in reader:
@@ -36,7 +36,7 @@ def loadCompanies(loadToDatabase=True):
         cursor.execute(request)
 
 
-def loadPurchases(loadToDatabase=True):
+def loadPurchases(loadToDatabase):
     with open("csvData/purchases.csv", encoding="utf-8") as file:
         reader = csv.DictReader(file, delimiter=";")
         vals = []
@@ -69,7 +69,7 @@ def loadPurchases(loadToDatabase=True):
             cursor.execute(request)
 
 
-def loadContracts(loadToDatabase=True):
+def loadContracts(loadToDatabase):
     with open("csvData/contracts.csv", encoding="utf-8") as file:
         reader = csv.DictReader(file, delimiter=";")
         vals = []
@@ -93,7 +93,7 @@ def loadContracts(loadToDatabase=True):
             cursor.execute(request)
 
 
-def loadParticipants(loadToDatabase=True):
+def loadParticipants(loadToDatabase):
     with open("csvData/participants.csv", encoding="utf-8") as file:
         reader = csv.DictReader(file, delimiter=";")
         vals = []
@@ -113,8 +113,22 @@ def loadParticipants(loadToDatabase=True):
             cursor.execute(request)
 
 
+def loadOKPD(loadToDatabase):
+    with open("csvData/okpd.csv", encoding="utf-8") as file:
+        reader = csv.DictReader(file)
+        vals = []
+        for row in reader:
+            row['Название'] = row['Название'].replace('"', '')
+            vals.append(f"""(\"{row['Код']}\", \"{row['Название']}\")""")
+        if loadToDatabase:
+            request = f"""INSERT INTO {OKPD_TABLES} (no, name)
+                            VALUES """ + ',\n'.join(vals)
+            cursor.execute(request)
+
+
 COMPANIES = {}
 PURCHASES = {}
+OKPD_TABLES = "analysis_okpd"
 COMPANIES_TABLE = "analysis_companies"
 CONTRACTS_TABLE = "analysis_contracts"
 PURCHASES_TABLE = "analysis_purchases"
@@ -133,6 +147,8 @@ if __name__ == '__main__':
     print('Contracts load: success')
     loadParticipants(loadToDatabase)
     print('Participants load: success')
+    loadOKPD(loadToDatabase)
+    print('OKPD load: success')
     con.commit()
     con.close()
     print('All success')
