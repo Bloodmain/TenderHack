@@ -1,6 +1,7 @@
 import csv
 import sqlite3
 import datetime
+import re
 
 
 def get_purch_id(id):
@@ -19,9 +20,11 @@ def loadCompanies(loadToDatabase):
     with open("csvData/companies.csv", encoding="utf-8") as file:
         reader = csv.DictReader(file, delimiter=";")
         for row in reader:
-            if len(row['name'].strip()) != 0:
-                COMPANIES[row['supplier_inn']] = [row] + COMPANIES.get(row['supplier_inn'], [])
+            if not re.match("^[\d+]{10,12}$", row['supplier_inn']):
+                continue
+            COMPANIES[row['supplier_inn']] = [row] + COMPANIES.get(row['supplier_inn'], [])
 
+        # print(len(COMPANIES))
         if not loadToDatabase:
             return
         request = f""" INSERT INTO {COMPANIES_TABLE} (name, supplier_inn, status, count_managers, okved) VALUES """
@@ -41,28 +44,25 @@ def loadPurchases(loadToDatabase):
         reader = csv.DictReader(file, delimiter=";")
         vals = []
         for row in reader:
-            if row['customer_inn'] not in COMPANIES:
-                continue
             row['id'] = int(get_purch_id(row['id']))
 
             PURCHASES[row['id']] = row
-
-            if not loadToDatabase:
-                continue
 
             row['publish_date'] = row['publish_date'].strip().split(' ')[0]
             row['contract_category'] = True if row['contract_category'] == "КС" else False
             row['price'] = int(float(row['price']))
             row['lot_name'] = row['lot_name'].replace('"', '')
             row['purchase_name'] = row['purchase_name'].replace('"', '')
+            row['customer_name'] = row['customer_name'].replace('"', '')
             row['customer_inn'] = int(row['customer_inn'])
             vals.append(
                 f"""(\"{row['id']}\", \"{row['purchase_name']}\", \"{row['lot_name']}\", \"{row['price']}\", 
                 \"{row['delivery_region']}\", \"{row['customer_inn']}\", \"{row['publish_date']}\", 
-                \"{row['contract_category']}\")""")
+                \"{row['contract_category']}\", \"{row['customer_name']}\")""")
+        print(len(vals))
         if loadToDatabase:
             request = f"""
-                    INSERT INTO {PURCHASES_TABLE} (id, purchase_name, lot_name, price, delivery_region, customer_inn_id, publish_date, contract_category)
+                    INSERT INTO {PURCHASES_TABLE} (id, purchase_name, lot_name, price, delivery_region, customer_inn, publish_date, contract_category, customer_name)
                     VALUES
                     """
             request = request + ',\n'.join(vals)
@@ -75,7 +75,7 @@ def loadContracts(loadToDatabase):
         vals = []
         for row in reader:
             row['id'] = int(get_purch_id(row['id']))
-            if row['id'] not in PURCHASES:
+            if row['id'] not in PURCHASES or "contr" not in row['contract_reg_number']:
                 continue
             date1 = datetime.date(*list(map(int, row['contract_conclusion_date'].split('-'))))
             date2 = datetime.date(*list(map(int, PURCHASES[row['id']]['publish_date'].split(' ')[0].split('-'))))
@@ -84,6 +84,8 @@ def loadContracts(loadToDatabase):
             row['price'] = int(float(row['price']))
             vals.append(f"""(\"{row['contract_reg_number']}\", \"{row['id']}\", \"{row['price']}\",
             \"{row['contract_conclusion_date']}\")""")
+            if "ЭЛТЭК" in vals[-1]:
+                print(vals[-1])
         if loadToDatabase:
             request = f"""
                         INSERT INTO {CONTRACTS_TABLE} (contract_reg_number, contract_id_id, price, contract_conclusion_date)
@@ -104,6 +106,7 @@ def loadParticipants(loadToDatabase):
                 continue
             row['is_winner'] = True if row['is_winner'] == "Да" else False
             vals.append(f"(\"{row['supplier_inn']}\", \"{row['id']}\", \"{row['is_winner']}\")")
+        print(len(vals))
         if loadToDatabase:
             request = f"""
                         INSERT INTO {PARTICIPANTS_TABLE} (supplier_inn_id, part_id_id, is_winner)

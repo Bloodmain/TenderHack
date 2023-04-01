@@ -1,5 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from analysis.models import *
+import datetime
 
 REGIONS = ['Москва', 'Санкт-Петербург', 'Московская', 'Краснодарский', 'Пермский', 'Новороссийск', 'Тюменская',
            'Кемеровская область - Кузбасс', 'Горнозаводск', 'Пермь', 'Ямало-Ненецкий', 'Муравленко', 'Березники',
@@ -13,13 +15,45 @@ REGIONS = ['Москва', 'Санкт-Петербург', 'Московска�
            'Тульская']
 
 
+"""
+регион, категория, отрезок времени 
+    1. прайс закупки по которой купили в контракте и начальный -> закупки 
+    2. Даты старты лота
+"""
+
+
 class ChartsApi(APIView):
+
+    def compareDate(self, date1, date2):
+        if date1 >= date2:
+            return True
+        return False
+
     def get(self, request, *args, **kwargs):
+        data_start = datetime.date(*list(map(int, request.query_params['dateStart'].split('-'))))
+        data_end = datetime.date(*list(map(int, request.query_params['dateEnd'].split('-'))))
+        category = request.query_params['category']
+        region = request.query_params['region']
+        inn = request.query_params['inn']
+        company_tenders = Participants.objects.filter(supplier_inn=inn)
+        purchases = []
+        other_data = []
+        for i in range(len(company_tenders)):
+            purchas = company_tenders[i].part_id
+            if (purchas.category == category or category == 'Все категории') \
+                    and self.compareDate(purchas.publish_date, data_start) \
+                    and self.compareDate(data_end, purchas.publish_date) and \
+                    (purchas.delivery_region == region or region == "Все регионы"):
+                purchases.append(purchas)
+                if not purchas.contract_category:
+                    print(purchas.part.count())
+                other_data.append({'contracts': purchas.contract.all(), 'count': purchas.part.count()})
+
         data = [
             {
                 'title': 'Time',
                 'type': 'doughnut',
-                'labels': ['1', '2', '3', '4', '5', '6', '7'],
+                'labels': ['1', '2', '3', '4', '5', 'long dick', 'ttt'],
                 'chart': [
                     {
                         'color': 'red',
