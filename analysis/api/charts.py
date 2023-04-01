@@ -30,33 +30,57 @@ def get_purchase_charts(purchases):
         ]
 
     purchases.sort(key=lambda a: -a[0].price)
+
     ret[0]['labels'] = [ a[0].purchase_name for a in purchases ]
-    ret[0]['chart']['color'][i] = [''] * len(purchases)
+    ret[0]['chart'][0]['color'][i] = [''] * len(purchases)
     for i in range(len(purchases)):
-        ret[0]['chart']['color'][i] = 'red' if purchases[i][0].purchase_category else 'blue'
-    ret[0]['chart']['data'] = [ a[0].prices for a in purchases ]
+        ret[0]['chart'][0]['color'][i] = 'red' if purchases[i][0].purchase_category else 'blue'
+    ret[0]['chart'][0]['data'] = [ a[0].prices for a in purchases ]
 
     purchases.sort(key=lambda a: -sum(contract.price for contact in a[1]['contracts']) if a[1]['is_winner'] else 0)
     ret[1]['labels'] = [ a[0].purchase_name for a in purchases ]
-    ret[1]['chart']['color'][i] = [''] * len(purchases)
+    ret[1]['chart'][0]['color'][i] = [''] * len(purchases)
     for i in range(len(purchases)):
-        ret[1]['chart']['color'][i] = 'red' if purchases[i][0].purchase_category else 'blue'
-    ret[1]['chart']['data'] = [ sum(contract.price for contact in a[1]['contracts']) for a in purchases ]
+        ret[1]['chart'][0]['color'][i] = 'red' if purchases[i][0].purchase_category else 'blue'
+
+    ret[1]['chart'][0]['data'] = [ sum(contract.price for contract in a[1]['contracts'])
+                                   * (1 if a[1]['is_winner'] else -1) for a in purchases ]
 
     purchases.sort(key=lambda a: a[1]['count'])
     ret[2]['labels'] = []
-    ret[2]['chart']['color'] = []
-    ret[2]['chart']['data'] = []
+    ret[2]['chart'][0]['color'] = []
+    ret[2]['chart'][0]['data'] = []
     for i in purchases:
         if not i[0]['purchase_category']:
             continue
         ret[2]['labels'].append(i[0].purchase_name)
-        ret[2]['chart']['color'].append('red')
-        ret[2]['chart']['data'].append(i[1]['count'])
+        ret[2]['chart'][0]['color'].append('red')
+        ret[2]['chart'][0]['data'].append(i[1]['count'])
     return ret
 
 
 def get_region_charts(purchases):
+    ret = [
+        {
+            'title': 'Максимальная начальная цена',
+            'concat': False,
+        },
+        {
+            'title': 'Финальная цена',
+            'concat': True,
+        }
+    ]
+    for i in ret:
+        i['type'] = 'bar'
+        i['labels'] = []
+        i['chart'] = [
+            {
+                'color': [],
+                'line_label': '',
+                'data': [],
+                'regression': False
+            }
+        ]
     ret = {
         'title': 'sex',
         'index': 4,
