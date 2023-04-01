@@ -117,8 +117,12 @@ def loadOKPD(loadToDatabase):
     with open("csvData/okpd.csv", encoding="utf-8") as file:
         reader = csv.DictReader(file)
         vals = []
+        trash_chars = ['"', '-', ':', '(', ')', '_', '.']
         for row in reader:
-            row['Название'] = row['Название'].replace('"', '')
+            row_name = row['Название'].lower()
+            for trash_char in trash_chars:
+                row_name = row_name.replace(trash_char, '')
+            row['Название'] = row_name
             vals.append(f"""(\"{row['Код']}\", \"{row['Название']}\")""")
         if loadToDatabase:
             request = f"""INSERT INTO {OKPD_TABLES} (no, name)
