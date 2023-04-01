@@ -62,11 +62,15 @@ def load_words_category():
     with open("names_category.json", "r") as nc:
         names_category = json.load(nc)
 
+
 #   can return None
 def find_category(lot_name):
     global words_category
     lot_name = fix_name(lot_name)
     tokens = clear(lot_name)
+    for trash_word in trash_words:
+        if trash_word in tokens:
+            tokens.remove(trash_word)
     potential_categories = dict()
     for token in tokens:
         matching_categories = words_category.get(token, [])
@@ -83,6 +87,7 @@ def find_category(lot_name):
             bestie = category_num
     return bestie
 
+
 if __name__ == "__main__":
     req = f"SELECT no, name FROM {OKPD_TABLE}"
     okpd_pairs = cur.execute(req).fetchall()
@@ -93,6 +98,13 @@ if __name__ == "__main__":
 
     req = f"SELECT id, lot_name FROM {PURCHASES_TABLE}"
     purchase_pairs = cur.execute(req).fetchall()
+    categories_map = dict()
+    ind = 0
+    for purchase_id, lot_name in purchase_pairs:
+        if ind % 1000 == 0:
+            print(ind, len(purchase_pairs))
+        categories_map[purchase_id] = find_category(lot_name)
+        ind += 1
 
-
-
+    with open("categories.json", "w") as categories_file:
+        json.dump(categories_map, categories_file)
