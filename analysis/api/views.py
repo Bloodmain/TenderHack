@@ -18,7 +18,7 @@ class ChartsApi(APIView):
         data = [
             {
                 'title': 'Time',
-                'type': 'pie',
+                'type': 'doughnut',
                 'labels': ['1', '2', '3', '4', '5', '6', '7'],
                 'chart': [
                     {
