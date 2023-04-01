@@ -2,11 +2,12 @@ from django.db import models
 
 
 # Create your models here.
+MAX_LENGTH = 200
 class Companies(models.Model):
-    name = models.CharField(max_length=100, verbose_name="Название компании")
+    name = models.CharField(max_length=MAX_LENGTH, verbose_name="Название компании")
     supplier_inn = models.PositiveBigIntegerField(verbose_name="ИНН компании", unique=True, primary_key=True)
     supplier_kpp = models.PositiveBigIntegerField(verbose_name="КПП компании", unique=True)
-    okved = models.CharField(max_length=100, verbose_name="Номера ОКВЭД компании")
+    okved = models.CharField(max_length=MAX_LENGTH, verbose_name="Номера ОКВЭД компании")
 
     ACTIVE = "A"
     BLOCKED = "B"
@@ -24,15 +25,17 @@ class Companies(models.Model):
 class Purchases(models.Model):
     # :NOTE: max_length for char field
     id = models.PositiveBigIntegerField(primary_key=True, unique=True, verbose_name="Номер закупки")
-    purchase_name = models.CharField(max_length=100, verbose_name="Название закупки", blank=False)
-    lot_name = models.CharField(max_length=100, verbose_name="Название лота", blank=False)
+    purchase_name = models.CharField(max_length=MAX_LENGTH, verbose_name="Название закупки", blank=False)
+    purchase_name_end = models.CharField(max_length=MAX_LENGTH, default="")
+    lot_name = models.CharField(max_length=MAX_LENGTH, verbose_name="Название лота", blank=False)
     price = models.PositiveIntegerField(verbose_name="Начальная максимальная цена закупки, предложенная заказчиком",
                                         blank=False)
+    vector = models.BinaryField(default=bytes(0))
     customer_inn = models.ForeignKey(to=Companies, on_delete=models.CASCADE,
                                      verbose_name="ИНН заказчика")
-    delivery_region = models.CharField(max_length=100, verbose_name="Регион доставки товара")
+    delivery_region = models.CharField(max_length=MAX_LENGTH, verbose_name="Регион доставки товара")
     publish_date = models.DateField(verbose_name="Дата публикации закупки")
-    contract_category = models.CharField(max_length=100, verbose_name=" Категория контракта(КС или Потребность)")
+    contract_category = models.BooleanField(verbose_name=" Категория контракта(КС или Потребность)")
 
 
 class Participants(models.Model):
