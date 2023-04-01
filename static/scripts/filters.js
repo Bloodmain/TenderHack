@@ -21,5 +21,9 @@ $(document).ready(function () {
         ("0" + d.getDate()).slice(-2));
 })
 $('#applyFilters').click(function () {
-    let categories = $("#categories-datalist")
+    let category = $("#categories-datalist").val();
+    let region = $("#regions-datalist").val();
+    let dateStart = $("#dateStart").val();
+    let dateEnd = $("#dateEnd").val();
+
 })
