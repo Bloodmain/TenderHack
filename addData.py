@@ -2,7 +2,6 @@ import csv
 import sqlite3
 import datetime
 import re
-from smartCategorizer import trash_chars, fix_name
 
 
 def get_purch_id(id):
@@ -18,23 +17,23 @@ def company_from_companies(companies):
 
 
 def loadCompanies(loadToDatabase):
-    with open("csvData/companies.csv", encoding="utf-8") as file:
+    with open("csvData/companies2.csv", encoding="utf-8") as file:
         reader = csv.DictReader(file, delimiter=";")
         for row in reader:
-            if not re.match("^[\d+]{10,12}$", row['supplier_inn']):
+            if not re.match("^\\d{10,12}$", row['supplier_inn']):
                 continue
             COMPANIES[row['supplier_inn']] = [row] + COMPANIES.get(row['supplier_inn'], [])
 
         if not loadToDatabase:
             return
-        request = f""" INSERT INTO {COMPANIES_TABLE} (name, supplier_inn, status, count_managers, okved) VALUES """
+        request = f""" INSERT INTO {COMPANIES_TABLE} (name, supplier_inn, status, count_managers, okved, cluster) VALUES """
         vals = []
         for inn, companies in COMPANIES.items():
             company = company_from_companies(companies)
             company['status'] = "active" if company['status'] == "Активная" else 'blocked'
             company['name'] = company['name'].replace('"', '')
             vals.append(
-                f"""(\"{company['name']}\", \"{company['supplier_inn']}\", \"{company['status']}\", \"{company['count_managers']}\", \"{company['okved']}\")""")
+                f"""(\"{company['name']}\", \"{company['supplier_inn']}\", \"{company['status']}\", \"{company['count_managers']}\", \"{company['okved']}\", \"{company['cluster']}\")""")
         request = request + ',\n'.join(vals)
         cursor.execute(request)
 
@@ -68,7 +67,7 @@ def replace_en_ru(lot_name):
 
 
 def loadPurchases(loadToDatabase):
-    with open("csvData/purchases.csv", encoding="utf-8") as file:
+    with open("csvData/purchases2.csv", encoding="utf-8") as file:
         reader = csv.DictReader(file, delimiter=";")
         vals = []
         for row in reader:
@@ -83,13 +82,14 @@ def loadPurchases(loadToDatabase):
             row['purchase_name'] = row['purchase_name'].replace('"', '')
             row['customer_name'] = row['customer_name'].replace('"', '')
             row['customer_inn'] = int(row['customer_inn'])
+            row['category'] = '.'.join(row['category'].replace(',', '.').split('.')[:2])
             vals.append(
                 f"""(\"{row['id']}\", \"{row['purchase_name']}\", \"{row['lot_name']}\", \"{row['price']}\", 
                 \"{row['delivery_region']}\", \"{row['customer_inn']}\", \"{row['publish_date']}\", 
-                \"{row['contract_category']}\", \"{row['customer_name']}\")""")
+                \"{row['contract_category']}\", \"{row['customer_name']}\", \"{row['category']}\")""")
         if loadToDatabase:
             request = f"""
-                    INSERT INTO {PURCHASES_TABLE} (id, purchase_name, lot_name, price, delivery_region, customer_inn, publish_date, contract_category, customer_name)
+                    INSERT INTO {PURCHASES_TABLE} (id, purchase_name, lot_name, price, delivery_region, customer_inn, publish_date, contract_category, customer_name, category)
                     VALUES
                     """
             request = request + ',\n'.join(vals)
@@ -145,18 +145,13 @@ def loadOKPD(loadToDatabase):
         reader = csv.DictReader(file)
         vals = []
         for row in reader:
-            row['Название'] = fix_name(row['Название'])
+            row['Код'] = '.'.join(row['Код'].replace(',', '.').split('.')[:2])
+            row['Название'] = row['Название'].replace('"', '')
             vals.append(f"""(\"{row['Код']}\", \"{row['Название']}\")""")
         if loadToDatabase:
             request = f"""INSERT INTO {OKPD_TABLE} (no, name)
                             VALUES """ + ',\n'.join(vals)
             cursor.execute(request)
-
-
-def clear_database(database):
-    cursor.execute(f"DELETE FROM {database}")
-    con.commit()
-    print(f"clear {database}: success")
 
 
 COMPANIES = {}
@@ -167,14 +162,15 @@ CONTRACTS_TABLE = "analysis_contracts"
 PURCHASES_TABLE = "analysis_purchases"
 PARTICIPANTS_TABLE = "analysis_participants"
 
+
 if __name__ == '__main__':
     con = sqlite3.connect("db.sqlite3")
     cursor = con.cursor()
-    # clear_database(PURCHASES_TABLE)
+
     loadToDatabase = True
     loadCompanies(loadToDatabase)
     print('Companies load: success')
-    loadPurchases(True)
+    loadPurchases(loadToDatabase)
     print('Purchases load: success')
     loadContracts(loadToDatabase)
     print('Contracts load: success')

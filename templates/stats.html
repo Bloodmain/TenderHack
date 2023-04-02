@@ -5,73 +5,71 @@
 
 {% block content %}
     <div class="text-center text-vertical-center">
-        <h2>Filters</h2>
+        <h2>Фильтры</h2>
     </div>
     <div class="row justify-content-md-left">
-        <div class="col col-md-3"><span>Categories:</span></div>
-        <div class="col col-md-3"><span>From:</span></div>
-        <div class="col col-md-3"><span>Till:</span></div>
+        <div class="col col-md-3"><span>Категория:</span></div>
+        <div class="col col-md-3"><span>Регион:</span></div>
+        <div class="col col-md-3"><span>От:</span></div>
+        <div class="col col-md-3"><span>До:</span></div>
     </div>
     <div class="row justify-content-md-left">
         <div class="col col-sm-3">
-            <input type="text" class="form-control" placeholder="Category" list="list-categories"
-                   id="categories-datalist" value="All">
+            <input type="text" class="form-control" placeholder="Категория" list="list-categories"
+                   id="categories-datalist" value="Все категории">
             <datalist id="list-categories">
-                <option>All</option>
+                <option>Все категории</option>
             </datalist>
-
         </div>
+
+        <div class="col col-sm-3">
+            <input type="text" class="form-control" placeholder="Регион" list="list-regions"
+                   id="regions-datalist" value="Все регионы">
+            <datalist id="list-regions">
+            </datalist>
+        </div>
+
         <div class="col col-sm-3">
             <input type="date" id="dateStart" class="dateInput" value="1970-01-01">
         </div>
         <div class="col col-sm-3">
             <input type="date" id="dateEnd" class="dateInput">
         </div>
-        <div class="col col-sm-2">
-            <button type="button" class="btn btn-danger" name="applyFilters">Apply</button>
-        </div>
+
     </div>
     <br>
-    <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
-        <div class="carousel-inner">
-            <div class="carousel-item active">
-                <div class="text-center text-vertical-center">
-                    <h2>Self-statistics</h2>
+    <div class="row justify-content-md-end">
+        <div class="col col-sm-2">
+            <button type="button" class="btn btn-danger" id="applyFilters">Применить</button>
+        </div>
+    </div>
+    <div class="row">
+
+        <div class="col col-md-2 list-group overflow-auto shadow interesting-suggestions">
+            <span class="text-center text-vertical-center">Интересные лоты:</span>
+            <br>
+        </div>
+        <div class="col col-xl">
+
+            <br>
+            <div id="carouselExampleControls" class="carousel slide" data-bs-ride="false" data-bs-wrap="false">
+                <div class="carousel-inner">
+
                 </div>
-                <div class="row justify-content-md-center">
-                    <div class="col col-md-5">
-                        <canvas id="myChart2"></canvas>
-                    </div>
-                </div>
-            </div>
-            <div class="carousel-item">
-                <div class="text-center text-vertical-center">
-                    <h2>Compare-statistics</h2>
-                </div>
-                <div class="row justify-content-md-center">
-                    <div class="col col-md-5">
-                        <canvas id="myChart"></canvas>
-                    </div>
-                    <div class="col col-md-5">
-                        <canvas id="myChart3"></canvas>
-                    </div>
-                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls"
+                        data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls"
+                        data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                </button>
             </div>
         </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls"
-                data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls"
-                data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
-        </button>
     </div>
 
 {% endblock %}
 {% block scripts %}
-    <script src="{% static 'scripts/charts.js' %}"></script>
+    <script src="{% static 'scripts/newCharts.js' %}"></script>
     <script src="{% static 'scripts/filters.js' %}"></script>
 {% endblock %}
