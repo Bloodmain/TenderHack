@@ -37,7 +37,7 @@ def get_purchase_charts(purchases):
     ret[0]['yName'] = "Рубли"
     ret[0]['chart'][0]['color'] = [''] * len(purchases)
     for i in range(len(purchases)):
-        if purchases[i][0].contract_category:
+        if purchases[i][0].contract_category == "True":
             ret[0]['chart'][0]['color'][i] = 'blue'
         else:
             ret[0]['chart'][0]['color'][i] = 'red'
@@ -48,18 +48,20 @@ def get_purchase_charts(purchases):
     ret[1]['labels'] = list(map(lambda a: a[0].purchase_name, purchases))
     ret[1]['chart'][0]['color'] = [''] * len(purchases)
     for i in range(len(purchases)):
-        if purchases[i][0].contract_category:
-            ret[0]['chart'][0]['color'][i] = 'blue'
+        if purchases[i][0].contract_category == "True":
+            ret[1]['chart'][0]['color'][i] = 'blue'
         else:
-            ret[0]['chart'][0]['color'][i] = 'red'
+            ret[1]['chart'][0]['color'][i] = 'red'
     ret[1]['chart'][0]['data'] = list(
         map(lambda a: sum(map(lambda contract: contract.price, a[1]['contracts'])), purchases))
-
     ret[2]['xName'] = "Закупки"
     ret[2]['yName'] = "Количество поставщиков"
     for i in purchases:
         ret[2]['labels'].append(i[0].purchase_name)
-        ret[2]['chart'][0]['color'].append('red')
+        if i[0].contract_category == "True":
+            ret[1]['chart'][0]['color'].append('blue')
+        else:
+            ret[1]['chart'][0]['color'].append('red')
         ret[2]['chart'][0]['data'].append(i[1]['count'])
     return ret
 

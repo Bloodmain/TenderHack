@@ -15,6 +15,7 @@ REGIONS = ['Москва', 'Санкт-Петербург', 'Московска�
            'Яхрома', 'Татарстан', 'Белгород', 'Вологодская', 'Саха (Якутия)', 'Челябинская', 'Калининградская',
            'Тульская']
 
+
 """
 регион, категория, отрезок времени 
     1. прайс закупки по которой купили в контракте и начальный -> закупки 
@@ -39,20 +40,17 @@ class ChartsApi(APIView):
         inn = request.query_params['inn']
         company_tenders = Participants.objects.filter(supplier_inn=inn)
         purchases = []
-        for i in range(len(company_tenders)):  #
-            purchas = company_tenders[i].part_id
-            if (purchas.category == category or category == 'Все категории') \
-                    and self.compareDate(purchas.publish_date, data_start) \
-                    and self.compareDate(data_end, purchas.publish_date) and \
-                    (purchas.delivery_region == region or region == "Все регионы"):
-                if purchas.id == 9128253:
-                    print(company_tenders[i].is_winner, company_tenders[i].supplier_inn.supplier_inn,
-                          company_tenders[i].id)
-                purchases.append([purchas,
+        for i in range(len(company_tenders)): #
+            purchase = company_tenders[i].part_id
+            if (purchase.category == category or category == 'Все категории') \
+                    and self.compareDate(purchase.publish_date, data_start) \
+                    and self.compareDate(data_end, purchase.publish_date) and \
+                    (purchase.delivery_region == region or region == "Все регионы"):
+                purchases.append([purchase,
                                   {
-                                      'contracts': purchas.contract.all(),
-                                      'count': purchas.part.count(),
-                                      'is_winner': company_tenders[i].is_winner == "True"
+                                    'contracts': purchase.contract.all(),
+                                    'count': purchase.part.count(),
+                                    'is_winner': company_tenders[i].is_winner == "True"
                                   }])
         data = make_charts_info(purchases)
         return Response(data)

@@ -87,7 +87,6 @@ def loadPurchases(loadToDatabase):
                 f"""(\"{row['id']}\", \"{row['purchase_name']}\", \"{row['lot_name']}\", \"{row['price']}\", 
                 \"{row['delivery_region']}\", \"{row['customer_inn']}\", \"{row['publish_date']}\", 
                 \"{row['contract_category']}\", \"{row['customer_name']}\", \"{row['category']}\")""")
-        print(len(vals))
         if loadToDatabase:
             request = f"""
                     INSERT INTO {PURCHASES_TABLE} (id, purchase_name, lot_name, price, delivery_region, customer_inn, publish_date, contract_category, customer_name, category)
@@ -112,8 +111,6 @@ def loadContracts(loadToDatabase):
             row['price'] = int(float(row['price']))
             vals.append(f"""(\"{row['contract_reg_number']}\", \"{row['id']}\", \"{row['price']}\",
             \"{row['contract_conclusion_date']}\")""")
-            if "ЭЛТЭК" in vals[-1]:
-                print(vals[-1])
         if loadToDatabase:
             request = f"""
                         INSERT INTO {CONTRACTS_TABLE} (contract_reg_number, contract_id_id, price, contract_conclusion_date)
@@ -134,7 +131,6 @@ def loadParticipants(loadToDatabase):
                 continue
             row['is_winner'] = True if row['is_winner'] == "Да" else False
             vals.append(f"(\"{row['supplier_inn']}\", \"{row['id']}\", \"{row['is_winner']}\")")
-        print(len(vals))
         if loadToDatabase:
             request = f"""
                         INSERT INTO {PARTICIPANTS_TABLE} (supplier_inn_id, part_id_id, is_winner)

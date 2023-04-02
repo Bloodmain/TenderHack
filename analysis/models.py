@@ -34,7 +34,7 @@ class Purchases(models.Model):
     customer_name = models.CharField(max_length=MAX_LENGTH, verbose_name="Название компании", blank=True)
     delivery_region = models.CharField(max_length=MAX_LENGTH, verbose_name="Регион доставки товара")
     publish_date = models.DateField(verbose_name="Дата публикации закупки")
-    contract_category = models.BooleanField(verbose_name=" Категория контракта(КС или Потребность)")
+    contract_category = models.CharField(max_length=10, verbose_name=" Категория контракта(КС или Потребность)")
 
 
 class Participants(models.Model):
