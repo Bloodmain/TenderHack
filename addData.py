@@ -67,7 +67,7 @@ def replace_en_ru(lot_name):
 
 
 def loadPurchases(loadToDatabase):
-    with open("csvData/purchases.csv", encoding="utf-8") as file:
+    with open("csvData/purchases2.csv", encoding="utf-8") as file:
         reader = csv.DictReader(file, delimiter=";")
         vals = []
         for row in reader:
@@ -82,14 +82,15 @@ def loadPurchases(loadToDatabase):
             row['purchase_name'] = row['purchase_name'].replace('"', '')
             row['customer_name'] = row['customer_name'].replace('"', '')
             row['customer_inn'] = int(row['customer_inn'])
+            row['category'] = '.'.join(row['category'].replace(',', '.').split('.')[:2])
             vals.append(
                 f"""(\"{row['id']}\", \"{row['purchase_name']}\", \"{row['lot_name']}\", \"{row['price']}\", 
                 \"{row['delivery_region']}\", \"{row['customer_inn']}\", \"{row['publish_date']}\", 
-                \"{row['contract_category']}\", \"{row['customer_name']}\")""")
+                \"{row['contract_category']}\", \"{row['customer_name']}\", \"{row['category']}\")""")
         print(len(vals))
         if loadToDatabase:
             request = f"""
-                    INSERT INTO {PURCHASES_TABLE} (id, purchase_name, lot_name, price, delivery_region, customer_inn, publish_date, contract_category, customer_name)
+                    INSERT INTO {PURCHASES_TABLE} (id, purchase_name, lot_name, price, delivery_region, customer_inn, publish_date, contract_category, customer_name, category)
                     VALUES
                     """
             request = request + ',\n'.join(vals)
@@ -148,6 +149,7 @@ def loadOKPD(loadToDatabase):
         reader = csv.DictReader(file)
         vals = []
         for row in reader:
+            row['Код'] = row['Код'].replace(',', '.')
             row['Название'] = row['Название'].replace('"', '')
             vals.append(f"""(\"{row['Код']}\", \"{row['Название']}\")""")
         if loadToDatabase:

@@ -3,7 +3,6 @@ from rest_framework.response import Response
 from analysis.models import *
 from analysis.api.charts import make_charts_info
 import datetime
-import pprint
 
 REGIONS = ['Москва', 'Санкт-Петербург', 'Московская', 'Краснодарский', 'Пермский', 'Новороссийск', 'Тюменская',
            'Кемеровская область - Кузбасс', 'Горнозаводск', 'Пермь', 'Ямало-Ненецкий', 'Муравленко', 'Березники',
@@ -35,6 +34,7 @@ class ChartsApi(APIView):
         data_start = datetime.date(*list(map(int, request.query_params['dateStart'].split('-'))))
         data_end = datetime.date(*list(map(int, request.query_params['dateEnd'].split('-'))))
         category = request.query_params['category']
+        category = OKPD.objects.filter(name=category).get() if category != "Все категории" else category
         region = request.query_params['region']
         inn = request.query_params['inn']
         company_tenders = Participants.objects.filter(supplier_inn=inn)
@@ -95,7 +95,7 @@ class ChartsApi(APIView):
 
 class Categories(APIView):
     def get(self, request, *args, **kwargs):
-        data = {'categories': ["Seeds", "melons", "weapons", "nuclear"]}
+        data = {'categories': list(map(lambda x: x.name, OKPD.objects.all()))}
         return Response(data)
 
 
