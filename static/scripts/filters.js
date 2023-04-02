@@ -37,7 +37,7 @@ $(document).ready(function () {
     $('#dateEnd').attr("value", d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" +
         ("0" + d.getDate()).slice(-2));
     start_charts_update();
-    $.get('/api/suggestions/', {'inn': window.location.pathname.split('/').at(-1)}, fill_suggestions);
+    $.get('/api/suggestions/', get_filters(), fill_suggestions);
 })
 
 function get_filters() {
