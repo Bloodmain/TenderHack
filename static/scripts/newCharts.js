@@ -267,7 +267,7 @@ function update_charts(data) {
 
         ctxs.push(document.getElementById('chart' + i))
         charts.push(new Chart(ctxs.at(-1), {
-            type: 'scatter',
+            type: chart.type,
             data: dataCfg,
             options: {
 
@@ -312,7 +312,5 @@ function update_charts(data) {
                 }
             }
         }));
-        let tools = new ChartJSEnhancements(charts.at(-1));
-        tools.initialize();
     }
 }
