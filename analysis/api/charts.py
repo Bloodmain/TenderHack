@@ -10,16 +10,19 @@ def get_purchase_charts(purchases):
             'title': 'Максимальная начальная цена',
             'concat': False,
             'ks': True,
+            'displayXLabels': False,
         },
         {
             'title': 'Финальная цена',
             'concat': True,
             'ks': True,
+            'displayXLabels': False,
         },
         {
             'title': 'Количество поставщиков-участников',
             'concat': True,
             'ks': True,
+            'displayXLabels': False,
         },
     ]
     for i in ret:
