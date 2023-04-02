@@ -1,4 +1,4 @@
-$.get('/api/categories', {}, function (data) {
+$.get('/api/categories', {'inn': window.location.pathname.split('/').at(-1)}, function (data) {
     let categories = data['categories'];
     let select_form = $('#list-categories');
     for (let i = 0; i < categories.length; ++i) {
