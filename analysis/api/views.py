@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from analysis.models import *
-from analysis.api.charts import make_charts_info
+from analysis.api.charts import make_charts_info, get_recommendations
 import datetime
 
 REGIONS = ['Москва', 'Санкт-Петербург', 'Московская', 'Краснодарский', 'Пермский', 'Новороссийск', 'Тюменская',
@@ -35,7 +35,6 @@ class ChartsApi(APIView):
         data_end = datetime.date(*list(map(int, request.query_params['dateEnd'].split('-'))))
         category = request.query_params['category']
         category = OKPD.objects.filter(name=category).get().no if category != "Все категории" else category
-        print(category)
         region = request.query_params['region']
         inn = request.query_params['inn']
         company_tenders = Participants.objects.filter(supplier_inn=inn)
@@ -63,7 +62,6 @@ class Categories(APIView):
         for part in Participants.objects.filter(supplier_inn=inn).all():
             for elem in OKPD.objects.filter(no=part.part_id.category).all():
                 res.add(elem.name)
-        print(len(res))
         data = {'categories': list(res)}
         return Response(data)
 
@@ -76,9 +74,37 @@ class Regions(APIView):
 
 class Suggestions(APIView):
     def get(self, request, *args, **kwargs):
-        # category = request.query_params['category']
-        # if category == "Все категории":
-        #     category =
-        data = [{'name': 'sidfisdfgsjkdfgsgfbdsjvbsjvbsbvsdhbvjhbvjhdbvjsdvbh', 'pk': 982735982, 'cost': '23422'},
-                {'name': 'bsvuhsbvbvxbv,,xvbxc,vnbv', 'pk': 3453433, 'cost': '1222333'}]
+        # return Response([])
+        inn = request.query_params['inn']
+        cluster = Companies.objects.get(supplier_inn=inn).cluster
+        category = request.query_params['category']
+        if category != "Все категории":
+            category = OKPD.objects.filter(name=category).get().no
+            purchases = Purchases.objects.filter(category)
+        else:
+            purchases = Purchases.objects
+        print(1)
+        purchases = purchases.filter(id__in=Participants.objects.filter(is_winner="False").values("part_id"))
+        print(2)
+        purchases = purchases.filter(id__not_in=Participants.objects.filter(supplier_inn=inn).values("supplier_inn")).all()
+        print(3)
+        contracts = list(map(lambda x: x.contract, purchases))
+
+        if len(purchases) == 0:
+            return Response([])
+
+        data = get_recommendations(purchases, {
+            "inn": inn,
+            "cluster": cluster,
+            "contracts": contracts
+        })[:5]
+        data = list(map(lambda x:
+                        {
+                            "name": x[0].lot_name,
+                            "pk": x[0].id,
+                            "cost": x[0].price
+                        }
+                        , data))
+        # data = [{'name': 'sidfisdfgsjkdfgsgfbdsjvbsjvbsbvsdhbvjhbvjhdbvjsdvbh', 'pk': 982735982, 'cost': '23422'},
+        #         {'name': 'bsvuhsbvbvxbv,,xvbxc,vnbv', 'pk': 3453433, 'cost': '1222333'}]
         return Response(data)
