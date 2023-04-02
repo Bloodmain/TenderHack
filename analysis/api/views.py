@@ -15,6 +15,7 @@ REGIONS = ['Москва', 'Санкт-Петербург', 'Московска�
            'Яхрома', 'Татарстан', 'Белгород', 'Вологодская', 'Саха (Якутия)', 'Челябинская', 'Калининградская',
            'Тульская']
 
+
 """
 регион, категория, отрезок времени 
     1. прайс закупки по которой купили в контракте и начальный -> закупки 
@@ -33,72 +34,39 @@ class ChartsApi(APIView):
         data_start = datetime.date(*list(map(int, request.query_params['dateStart'].split('-'))))
         data_end = datetime.date(*list(map(int, request.query_params['dateEnd'].split('-'))))
         category = request.query_params['category']
-        category = OKPD.objects.filter(name=category).get() if category != "Все категории" else category
+        category = OKPD.objects.filter(name=category).get().no if category != "Все категории" else category
+        print(category)
         region = request.query_params['region']
         inn = request.query_params['inn']
         company_tenders = Participants.objects.filter(supplier_inn=inn)
         purchases = []
-        for i in range(len(company_tenders)):  #
+        for i in range(len(company_tenders)): #
             purchas = company_tenders[i].part_id
             if (purchas.category == category or category == 'Все категории') \
                     and self.compareDate(purchas.publish_date, data_start) \
                     and self.compareDate(data_end, purchas.publish_date) and \
                     (purchas.delivery_region == region or region == "Все регионы"):
                 if purchas.id == 9128253:
-                    print(company_tenders[i].is_winner, company_tenders[i].supplier_inn.supplier_inn,
-                          company_tenders[i].id)
+                    print(company_tenders[i].is_winner, company_tenders[i].supplier_inn.supplier_inn, company_tenders[i].id)
                 purchases.append([purchas,
                                   {
-                                      'contracts': purchas.contract.all(),
-                                      'count': purchas.part.count(),
-                                      'is_winner': company_tenders[i].is_winner
+                                    'contracts': purchas.contract.all(),
+                                    'count': purchas.part.count(),
+                                    'is_winner': company_tenders[i].is_winner == "True"
                                   }])
-
-        data = [
-            {
-                'title': 'Time',
-                'concat': False,
-                'type': 'doughnut',
-                'labels': ['1', '2', '3', '4', '5', 'long dick', 'ttt'],
-                'chart': [
-                    {
-                        'color': ['red'],
-                        'line_label': 'time_label',
-                        'data': [123, 3, 12, 33, 98, 100, 23],
-                        'regression': False
-                    }
-                ]
-            },
-            {
-                'title': 'Segments',
-                'type': 'bar',
-                'labels': ['1', '2', '3', '4', '5', '6', '7'],
-                'chart': [
-                    {
-                        'color': 'blue',
-                        'line_label': 'seg1_label',
-                        'data': [1, 2, 3, 4, 5, 6, 1],
-                        'regression': False
-                    },
-                    {
-                        'color': 'green',
-                        'line_label': 'seg2_label',
-                        'data': [10, 3, 12, 39, 48, 55, 10],
-                        'regression': False
-                    }
-                ]
-            }
-        ]
-        # print(purchases[0][0].delivery_region)
         data = make_charts_info(purchases)
-        # print(*data, sep='\n\n\n\n')
-        # pprint.pprint(data[0])
         return Response(data)
 
 
 class Categories(APIView):
     def get(self, request, *args, **kwargs):
-        data = {'categories': ["1", "2", "3"]}  # list(map(lambda x: x.name, OKPD.objects.all()))
+        inn = request.query_params['inn']
+        res = set()
+        for part in Participants.objects.filter(supplier_inn=inn).all():
+            for elem in OKPD.objects.filter(no=part.part_id.category).all():
+                res.add(elem.name)
+        print(len(res))
+        data = {'categories': list(res)}
         return Response(data)
 
 

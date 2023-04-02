@@ -149,7 +149,7 @@ def loadOKPD(loadToDatabase):
         reader = csv.DictReader(file)
         vals = []
         for row in reader:
-            row['Код'] = row['Код'].replace(',', '.')
+            row['Код'] = '.'.join(row['Код'].replace(',', '.').split('.')[:2])
             row['Название'] = row['Название'].replace('"', '')
             vals.append(f"""(\"{row['Код']}\", \"{row['Название']}\")""")
         if loadToDatabase:

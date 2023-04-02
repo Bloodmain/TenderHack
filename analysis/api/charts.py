@@ -7,14 +7,17 @@ def get_purchase_charts(purchases):
         {
             'title': 'Максимальная начальная цена',
             'concat': False,
+            'displayXLabels': False
         },
         {
             'title': 'Финальная цена',
             'concat': True,
+            'displayXLabels': False
         },
         {
             'title': 'Количество поставщиков-участников',
-            'concat': True
+            'concat': True,
+            'displayXLabels': False
         },
     ]
     for i in ret:
@@ -66,10 +69,12 @@ def get_region_charts(purchases):
         {
             'title': 'Максимальная начальная цена',
             'concat': False,
+            'displayXLabels': False
         },
         {
             'title': 'Финальная цена',
             'concat': True,
+            'displayXLabels': False
         }
     ]
     for i in ret:
@@ -108,10 +113,12 @@ def get_year_charts(purchases):
     ret = [
         {
             'title': 'Максимальная начальная цена',
+            'displayXLabels': True,
             'concat': False,
         },
         {
             'title': 'Финальная цена',
+            'displayXLabels': True,
             'concat': True,
         }
     ]
@@ -154,6 +161,7 @@ def get_month_charts(purchases):
         'title': '',
         'concat': False,
         'type': 'bar',
+        'displayXLabels': True,
         'labels': ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август",
                    "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"],
         'chart': [{'color': ['blue'] * MONTH_CNT,
@@ -165,6 +173,7 @@ def get_month_charts(purchases):
         'title': '',
         'concat': True,
         'type': 'bar',
+        'displayXLabels': True,
         'labels': ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август",
                    "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"],
         'chart': [{'color': ['blue'] * MONTH_CNT,
@@ -176,6 +185,7 @@ def get_month_charts(purchases):
         'title': 'Количество выигрышных и проигрышных тендеров',
         'type': 'bar',
         'concat': True,
+        'displayXLabels': True,
         'labels': ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август",
                    "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"],
         'chart': [{'color': ['green'] * MONTH_CNT,
@@ -212,5 +222,3 @@ def get_month_charts(purchases):
 
 def make_charts_info(purchases):
     return [*get_purchase_charts(purchases), *get_month_charts(purchases), *get_year_charts(purchases), *get_region_charts(purchases)]
-    # return [get_day_charts(purchases), get_month_charts(purchases), get_year_charts(purchases),
-    #         get_purchase_charts(purchases), get_region_charts(purchases)]
