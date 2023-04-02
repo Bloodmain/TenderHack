@@ -3,19 +3,23 @@
 from analysis.api.findSuggestions import find_suggestions
 from analysis.models import *
 
+
 def get_purchase_charts(purchases):
     ret = [
         {
             'title': 'Максимальная начальная цена',
             'concat': False,
+            'ks': True,
         },
         {
             'title': 'Финальная цена',
             'concat': True,
+            'ks': True,
         },
         {
             'title': 'Количество поставщиков-участников',
-            'concat': True
+            'concat': True,
+            'ks': True,
         },
     ]
     for i in ret:
@@ -24,7 +28,7 @@ def get_purchase_charts(purchases):
         i['chart'] = [
             {
                 'color': [],
-                'line_label': '',
+                'line_label': 'Потребность',
                 'data': [],
                 'regression': False
             }
@@ -57,9 +61,9 @@ def get_purchase_charts(purchases):
     for i in purchases:
         ret[2]['labels'].append(i[0].purchase_name)
         if i[0].contract_category == "True":
-            ret[1]['chart'][0]['color'].append('blue')
+            ret[2]['chart'][0]['color'].append('blue')
         else:
-            ret[1]['chart'][0]['color'].append('red')
+            ret[2]['chart'][0]['color'].append('red')
         ret[2]['chart'][0]['data'].append(i[1]['count'])
     return ret
 
@@ -112,17 +116,6 @@ def get_region_charts(purchases):
         },
 
     ]
-    # for i in ret:
-    #     i['type'] = 'doughnut'
-    #     i['labels'] = []
-    #     i['chart'] = [
-    #         {
-    #             'color': [],
-    #             'line_label': '',
-    #             'data': [],
-    #             'regression': False
-    #         }
-    #     ]
     region_info = {}
     for i in purchases:
         region = i[0].delivery_region
@@ -258,6 +251,7 @@ def get_month_charts(purchases):
 
     return ret
 
+
 def get_recommendations(purchases, inn):
     print({ "inn": inn, "cluster": Companies.objects.get(supplier_inn=inn).cluster })
     print(find_suggestions(purchases, { "inn": inn, "cluster": Companies.objects.get(supplier_inn=inn).cluster }))
@@ -265,6 +259,6 @@ def get_recommendations(purchases, inn):
 
 def make_charts_info(purchases, inn):
     return [*get_purchase_charts(purchases), *get_month_charts(purchases), *get_year_charts(purchases),
-            *get_region_charts(purchases), *get_recommendations(purchases, inn)]
+            *get_region_charts(purchases)]
     # return [get_day_charts(purchases), get_month_charts(purchases), get_year_charts(purchases),
     #         get_purchase_charts(purchases), get_region_charts(purchases)]

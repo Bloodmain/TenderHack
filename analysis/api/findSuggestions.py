@@ -1,5 +1,11 @@
-from analysis.api.clasterizator import check_cluster
 from functools import cmp_to_key
+
+
+def check_cluster(x):
+    edges = [5_000, 50_000, 500_000, 5_000_000_000]
+    for j in range(4):
+        if x < edges[j] or j == 3:
+            return j + 1
 
 
 def cmp(item1, item2):
