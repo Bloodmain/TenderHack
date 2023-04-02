@@ -50,4 +50,16 @@ def count_meds():
         json.dump(participant_map, cls)
 
 if __name__ == "__main__":
-    count_meds()
+    # count_meds()
+    with open("medians.json", "r") as cls:
+        mapa = json.load(cls)
+    edges = [5_000, 50_000, 500_000, 5_000_000_000]
+    for inn in mapa:
+        for j in range(4):
+            if mapa[inn] < edges[j] or j == 3:
+                mapa[inn] = j + 1
+                break
+    with open("clasterization.json", "w") as cls:
+        json.dump(mapa, cls)
+
+
