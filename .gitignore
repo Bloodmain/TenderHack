@@ -1,3 +1,5 @@
 venv
 .idea
 *.xml
+*.sqlite3
+csvData
