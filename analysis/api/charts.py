@@ -35,7 +35,7 @@ def get_purchase_charts(purchases):
     ret[0]['labels'] = list(map(lambda a: a[0].purchase_name, purchases))
     ret[0]['xName'] = "Закупки"
     ret[0]['yName'] = "Рубли"
-    ret[0]['chart'][0]['color'] = ['' for _ in range(len(purchases))]
+    ret[0]['chart'][0]['color'] = [''] * len(purchases)
     for i in range(len(purchases)):
         if purchases[i][0].contract_category:
             ret[0]['chart'][0]['color'][i] = 'blue'
@@ -46,7 +46,7 @@ def get_purchase_charts(purchases):
     ret[1]['xName'] = "Закупки"
     ret[1]['yName'] = "Рубли"
     ret[1]['labels'] = list(map(lambda a: a[0].purchase_name, purchases))
-    ret[1]['chart'][0]['color'] = ['' for _ in range(len(purchases))]
+    ret[1]['chart'][0]['color'] = [''] * len(purchases)
     for i in range(len(purchases)):
         if purchases[i][0].contract_category:
             ret[0]['chart'][0]['color'][i] = 'blue'
@@ -94,17 +94,17 @@ def get_region_charts(purchases):
         if region not in region_info:
             region_info[region] = [0, 0]
         region_info[region][0] += i[0].price
-        region_info[region][1] += sum([contract.price for contract in i[1]["contracts"]])
-    ret[0]['labels'] = list(map(lambda a: a, region_info.keys()))
+        region_info[region][1] += sum(contract.price for contract in i[1]["contracts"])
+    ret[0]['labels'] = list(region_info.keys())
     ret[0]['xName'] = "Регионы"
     ret[0]['yName'] = "Рубли"
-    ret[0]['chart'][0]['color'] = ['blue' for _ in range(len(purchases))]
+    ret[0]['chart'][0]['color'] = ['blue'] * len(purchases)
     ret[0]['chart'][0]['data'] = list(map(lambda a: region_info[a][0], region_info.keys()))
 
     ret[1]['xName'] = "Регионы"
     ret[1]['yName'] = "Рубли"
-    ret[1]['labels'] = list(map(lambda a: a, region_info.keys()))
-    ret[1]['chart'][0]['color'] = ['blue' for _ in range(len(purchases))]
+    ret[1]['labels'] = list(region_info.keys())
+    ret[1]['chart'][0]['color'] = ['blue'] * len(purchases)
     ret[1]['chart'][0]['data'] = list(map(lambda a: region_info[a][1], region_info.keys()))
     return ret
 
@@ -139,17 +139,17 @@ def get_year_charts(purchases):
         if year not in year_info:
             year_info[year] = [0, 0]
         year_info[year][0] += i[0].price
-        year_info[year][1] += sum([contract.price for contract in i[1]["contracts"]])
-    ret[0]['labels'] = list(map(lambda a: a, year_info.keys()))
+        year_info[year][1] += sum(contract.price for contract in i[1]["contracts"])
+    ret[0]['labels'] = list(year_info.keys())
     ret[0]['xName'] = "Года"
     ret[0]['yName'] = "Рубли"
-    ret[0]['chart'][0]['color'] = ['blue' for _ in range(len(purchases))]
+    ret[0]['chart'][0]['color'] = ['blue'] * len(purchases)
     ret[0]['chart'][0]['data'] = list(map(lambda a: year_info[a][0], year_info.keys()))
 
     ret[1]['xName'] = "Года"
     ret[1]['yName'] = "Рубли"
-    ret[1]['labels'] = list(map(lambda a: a, year_info.keys()))
-    ret[1]['chart'][0]['color'] = ['blue' for _ in range(len(purchases))]
+    ret[1]['labels'] = list(year_info.keys())
+    ret[1]['chart'][0]['color'] = ['blue'] * len(purchases)
     ret[1]['chart'][0]['data'] = list(map(lambda a: year_info[a][1], year_info.keys()))
     return ret
 
@@ -203,8 +203,7 @@ def get_month_charts(purchases):
     for purchase in purchases:
         purchase_month = purchase[0].publish_date.month - 1  # because date.month is 1..12 inclusive
         ret[0]['chart'][0]['data'][purchase_month] += purchase[0].price
-        ret[1]['chart'][0]['data'][purchase_month] += sum(
-            [(1 if purchase[1]["is_winner"] else 0) * contract.price for contract in purchase[1]["contracts"]])
+        ret[1]['chart'][0]['data'][purchase_month] += sum(contract.price for contract in purchase[1]["contracts"] if purchase[1]["is_winner"])
         # print(purchase[1]['is_winner'])
         ret[2]['chart'][0]['data'][purchase_month] += (1 if purchase[1]["is_winner"] else 0)
         ret[2]['chart'][1]['data'][purchase_month] += (1 if not purchase[1]["is_winner"] else 0)
