@@ -137,7 +137,7 @@ function update_charts(data) {
                             autoSkip: true,
                             maxRotation: 0,
                             minRotation: 0,
-                            display: false,
+                            display: chart.displayXLabels,
                         },
                         grid: {
                             display: false
