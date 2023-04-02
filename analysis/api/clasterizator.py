@@ -26,20 +26,20 @@ def count_meds():
         if ind % 1000 == 0:
             print(ind, len(participant_tuples))
         ind += 1
-        if is_winner:
-            if supplier_inn not in participant_contract_prices:
-                participant_contract_prices[supplier_inn] = []
-            req = f"SELECT price FROM {CONTRACTS_TABLE} WHERE contract_id_id = {purchase_id}"
-            resp = cur.execute(req).fetchone()
-            # print(resp)
-            if resp is not None:
-                participant_contract_prices[supplier_inn].append(resp[0])
+        if supplier_inn not in participant_contract_prices:
+            participant_contract_prices[supplier_inn] = []
+        req = f"SELECT price FROM {CONTRACTS_TABLE} WHERE contract_id_id = {purchase_id}"
+        resp = cur.execute(req).fetchone()
+        # print(resp)
+        if resp is not None:
+            participant_contract_prices[supplier_inn].append(resp[0])
+    print("partice", len(participant_contract_prices))
     participant_map = dict()
     ind = 0
     for supplier_inn in participant_contract_prices:
-        if ind % 1000 == 0:
-            print(ind, len(participant_contract_prices))
-        ind += 1
+        # if ind % 1000 == 0:
+        #     print(ind, len(participant_contract_prices))
+        # ind += 1
         participant_contract_prices[supplier_inn].sort()
         median = 0
         if len(participant_contract_prices[supplier_inn]) > 0:
@@ -61,6 +61,7 @@ if __name__ == "__main__":
     # count_meds()
     with open("medians.json", "r") as cls:
         mapa = json.load(cls)
+        print(len(mapa))
     edges = [5_000, 50_000, 500_000, 5_000_000_000]
     for inn in mapa:
         for j in range(4):
