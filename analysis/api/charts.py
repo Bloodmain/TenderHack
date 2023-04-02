@@ -31,7 +31,7 @@ def get_purchase_charts(purchases):
         i['chart'] = [
             {
                 'color': [],
-                'line_label': 'Потребность',
+                'line_label': '',
                 'data': [],
                 'regression': False
             }
@@ -41,6 +41,7 @@ def get_purchase_charts(purchases):
     ret[0]['xName'] = "Закупки"
     ret[0]['yName'] = "Рубли"
     ret[0]['chart'][0]['color'] = ['' for _ in range(len(purchases))]
+    flag = True
     for i in range(len(purchases)):
         if purchases[i][0].contract_category == "True":
             ret[0]['chart'][0]['color'][i] = 'blue'
@@ -77,13 +78,13 @@ def get_region_charts(purchases):
             'title': 'Максимальная начальная цена по регионам',
             'concat': False,
             'ks': False,
-            'displayXLabels': False
+            'displayXLabels': True
         },
         {
             'title': 'Финальная цена выигрышных тендеров по регионам',
             'concat': True,
             'ks': False,
-            'displayXLabels': False
+            'displayXLabels': True
         }
     ]
     for i in ret:

@@ -1,7 +1,5 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-
-from analysis.api.findSuggestions import find_suggestions
 from analysis.models import *
 from analysis.api.charts import make_charts_info, get_recommendations
 import datetime
@@ -16,6 +14,7 @@ REGIONS = ['Москва', 'Санкт-Петербург', 'Московска�
            'Ханты-Мансийский АО - Югра', 'Старорусский', 'Иркутск', 'Ярославская', 'Ростовская', 'Брянская',
            'Яхрома', 'Татарстан', 'Белгород', 'Вологодская', 'Саха (Якутия)', 'Челябинская', 'Калининградская',
            'Тульская']
+
 
 """
 регион, категория, отрезок времени 
