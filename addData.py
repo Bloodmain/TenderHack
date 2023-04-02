@@ -17,24 +17,24 @@ def company_from_companies(companies):
 
 
 def loadCompanies(loadToDatabase):
-    with open("csvData/companies.csv", encoding="utf-8") as file:
+    with open("csvData/companies2.csv", encoding="utf-8") as file:
         reader = csv.DictReader(file, delimiter=";")
         for row in reader:
-            if not re.match("^[\d+]{10,12}$", row['supplier_inn']):
+            if not re.match("^\\d{10,12}$", row['supplier_inn']):
                 continue
             COMPANIES[row['supplier_inn']] = [row] + COMPANIES.get(row['supplier_inn'], [])
 
         # print(len(COMPANIES))
         if not loadToDatabase:
             return
-        request = f""" INSERT INTO {COMPANIES_TABLE} (name, supplier_inn, status, count_managers, okved) VALUES """
+        request = f""" INSERT INTO {COMPANIES_TABLE} (name, supplier_inn, status, count_managers, okved, cluster) VALUES """
         vals = []
         for inn, companies in COMPANIES.items():
             company = company_from_companies(companies)
             company['status'] = "active" if company['status'] == "Активная" else 'blocked'
             company['name'] = company['name'].replace('"', '')
             vals.append(
-                f"""(\"{company['name']}\", \"{company['supplier_inn']}\", \"{company['status']}\", \"{company['count_managers']}\", \"{company['okved']}\")""")
+                f"""(\"{company['name']}\", \"{company['supplier_inn']}\", \"{company['status']}\", \"{company['count_managers']}\", \"{company['okved']}\", \"{company['cluster']}\")""")
         request = request + ',\n'.join(vals)
         cursor.execute(request)
 
