@@ -77,6 +77,7 @@ def get_region_charts(purchases):
         {
             'title': 'Максимальная начальная цена',
             'concat': False,
+            'ks': False,
             'chart': [{'color': ['green'] * MONTH_CNT,
                        'line_label': 'Выигрышные',
                        'data': [0] * MONTH_CNT,
@@ -91,6 +92,7 @@ def get_region_charts(purchases):
         {
             'title': 'Финальная цена',
             'concat': True,
+            'ks': False,
             'chart': [{'color': ['green'] * MONTH_CNT,
                        'line_label': 'Выигрышные',
                        'data': [0] * MONTH_CNT,
@@ -106,6 +108,7 @@ def get_region_charts(purchases):
             'title': 'Количество выигрышных и проигрышных тендеров',
             'type': 'bar',
             'concat': True,
+            'ks': False,
             'chart': [{'color': ['green'] * MONTH_CNT,
                        'line_label': 'Выигрышные',
                        'data': [0] * MONTH_CNT,
@@ -154,10 +157,12 @@ def get_year_charts(purchases):
         {
             'title': 'Максимальная начальная цена',
             'concat': False,
+            'ks': False,
         },
         {
             'title': 'Финальная цена',
             'concat': True,
+            'ks': False,
         }
     ]
     for i in ret:
