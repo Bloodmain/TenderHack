@@ -11,6 +11,7 @@ def cmp(item1, item2):
 # Pred: все purchases в данной категории
 #   args['inn'] - инн поставщика
 #   args['cluster'] - кластер поставщика (1..4)
+#   purchase_dict['participants'] - участники данной закупки
 def find_suggestions(purchases, args):
     ret = []
     for purchase_pair in purchases:
