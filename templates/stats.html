@@ -43,19 +43,28 @@
             <button type="button" class="btn btn-danger" id="applyFilters">Применить</button>
         </div>
     </div>
-    <br>
-    <div id="carouselExampleControls" class="carousel slide" data-bs-ride="false" data-bs-wrap="false">
-        <div class="carousel-inner">
+    <div class="row">
 
+        <div class="col col-md-2 list-group overflow-auto shadow interesting-suggestions">
+            <span class="text-center text-vertical-center">Интересные предложения:</span>
         </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls"
-                data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls"
-                data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        </button>
+        <div class="col col-xl">
+
+            <br>
+            <div id="carouselExampleControls" class="carousel slide" data-bs-ride="false" data-bs-wrap="false">
+                <div class="carousel-inner">
+
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls"
+                        data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls"
+                        data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                </button>
+            </div>
+        </div>
     </div>
 
 {% endblock %}

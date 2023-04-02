@@ -1,4 +1,7 @@
-$(document).ready(() => $('.carousel').carousel());
+$(document).ready(() => $('.carousel').carousel().on('slide.bs.carousel', function () {
+        adjust_suggestions()
+    }
+));
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * max);
@@ -147,5 +150,6 @@ function update_charts(data) {
                 }
             }
         }));
+        adjust_suggestions();
     }
 }

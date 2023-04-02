@@ -15,7 +15,6 @@ REGIONS = ['Москва', 'Санкт-Петербург', 'Московска�
            'Яхрома', 'Татарстан', 'Белгород', 'Вологодская', 'Саха (Якутия)', 'Челябинская', 'Калининградская',
            'Тульская']
 
-
 """
 регион, категория, отрезок времени 
     1. прайс закупки по которой купили в контракте и начальный -> закупки 
@@ -39,19 +38,20 @@ class ChartsApi(APIView):
         inn = request.query_params['inn']
         company_tenders = Participants.objects.filter(supplier_inn=inn)
         purchases = []
-        for i in range(len(company_tenders)): #
+        for i in range(len(company_tenders)):  #
             purchas = company_tenders[i].part_id
             if (purchas.category == category or category == 'Все категории') \
                     and self.compareDate(purchas.publish_date, data_start) \
                     and self.compareDate(data_end, purchas.publish_date) and \
                     (purchas.delivery_region == region or region == "Все регионы"):
                 if purchas.id == 9128253:
-                    print(company_tenders[i].is_winner, company_tenders[i].supplier_inn.supplier_inn, company_tenders[i].id)
+                    print(company_tenders[i].is_winner, company_tenders[i].supplier_inn.supplier_inn,
+                          company_tenders[i].id)
                 purchases.append([purchas,
                                   {
-                                    'contracts': purchas.contract.all(),
-                                    'count': purchas.part.count(),
-                                    'is_winner': company_tenders[i].is_winner
+                                      'contracts': purchas.contract.all(),
+                                      'count': purchas.part.count(),
+                                      'is_winner': company_tenders[i].is_winner
                                   }])
 
         data = [
@@ -98,11 +98,17 @@ class ChartsApi(APIView):
 
 class Categories(APIView):
     def get(self, request, *args, **kwargs):
-        data = {'categories': ["1", "2", "3"]} # list(map(lambda x: x.name, OKPD.objects.all()))
+        data = {'categories': ["1", "2", "3"]}  # list(map(lambda x: x.name, OKPD.objects.all()))
         return Response(data)
 
 
 class Regions(APIView):
     def get(self, request, *args, **kwargs):
         data = {'regions': REGIONS}
+        return Response(data)
+
+
+class Suggestions(APIView):
+    def get(self, request, *args, **kwargs):
+        data = [{'url': '#', 'text': "hey!"}, {'url': '#', 'text': "hey2!"}]
         return Response(data)
