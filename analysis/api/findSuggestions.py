@@ -9,9 +9,7 @@ def check_cluster(x):
 
 
 def cmp(item1, item2):
-    # if item1.contr == item2[1]:
-        return item2.publish_date - item1.publish_date
-    # return item1[1] - item2[1]
+    return item2.publish_date < item1.publish_date
 
 
 # Pred: все purchases в данной категории
@@ -19,10 +17,9 @@ def cmp(item1, item2):
 #   args['cluster'] - кластер поставщика (1..4)
 def find_suggestions(purchases, args):
     ret = []
-    for i in range(len(purchases)):
-        if i % 1000 == 0:
-            print(i, len(ret))
-        purchase = purchases[i]
+    for purchase in purchases:
+        # if i % 1000 == 0:
+        #     print(i, len(ret))
         if check_cluster(purchase.price) != args['cluster']:
             continue
         ret.append(purchase)

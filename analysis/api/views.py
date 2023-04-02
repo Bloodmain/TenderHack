@@ -1,5 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
+
+from analysis.api.findSuggestions import find_suggestions
 from analysis.models import *
 from analysis.api.charts import make_charts_info, get_recommendations
 import datetime
@@ -83,15 +85,14 @@ class Suggestions(APIView):
             purchases = Purchases.objects.filter(category)
         else:
             purchases = Purchases.objects
-        print(1, purchases.count())
         purchases = purchases.filter(id__in=Participants.objects.filter(is_winner="False").values("part_id"))
-        print(2, purchases.count())
         purchases = purchases.filter(id__in=Participants.objects.exclude(supplier_inn=inn).values("part_id"))
-        print(3, purchases.count())
+        # contracts = list(map(lambda x: x.contract, purchases))
 
         data = find_suggestions(purchases, {
             "inn": inn,
             "cluster": cluster,
+            # "contracts": contracts,
         })[:5]
 
         if purchases.count() == 0:
@@ -99,9 +100,9 @@ class Suggestions(APIView):
         print(data)
         data = list(map(lambda x:
                         {
-                            "name": x[0].lot_name,
-                            "pk": x[0].id,
-                            "cost": x[0].price
+                            "name": x.lot_name,
+                            "pk": x.id,
+                            "cost": x.price
                         }
                         , data))
         # data = [{'name': 'sidfisdfgsjkdfgsgfbdsjvbsjvbsbvsdhbvjhbvjhdbvjsdvbh', 'pk': 982735982, 'cost': '23422'},
