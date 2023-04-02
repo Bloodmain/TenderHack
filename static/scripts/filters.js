@@ -1,4 +1,4 @@
-$.get('/api/categories', {}, function (data) {
+$.get('/api/categories', {'inn': window.location.pathname.split('/').at(-1)}, function (data) {
     let categories = data['categories'];
     let select_form = $('#list-categories');
     for (let i = 0; i < categories.length; ++i) {
@@ -14,11 +14,28 @@ $.get('/api/regions', {}, function (data) {
     }
 })
 
+function fill_suggestions(data) {
+    let is = $('.interesting-suggestions');
+    for (let el of data) {
+        is.append(
+            "<li><a href='" + el.url + "'>" + el.text + "</a></li>"
+        )
+    }
+}
+
+function adjust_suggestions() {
+    let is = $('.interesting-suggestions');
+    let item = $('.carousel-item');
+    is.attr('height', item.height())
+    is.attr('max-height', item.height())
+}
+
 $(document).ready(function () {
     let d = new Date()
     $('#dateEnd').attr("value", d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" +
         ("0" + d.getDate()).slice(-2));
     start_charts_update();
+    $.get('/api/suggestions/', {'inn': window.location.pathname.split('/').at(-1)}, fill_suggestions);
 })
 
 function get_filters() {
@@ -36,3 +53,5 @@ $('#applyFilters').click(start_charts_update);
 function start_charts_update() {
     $.get('/api/charts/', get_filters(), update_charts);
 }
+
+

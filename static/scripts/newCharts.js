@@ -1,4 +1,7 @@
-$(document).ready(() => $('.carousel').carousel());
+$(document).ready(() => $('.carousel').carousel().on('slide.bs.carousel', function () {
+        adjust_suggestions()
+    }
+));
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * max);
@@ -17,49 +20,136 @@ const CHART_COLORS = {
 let charts = []
 let ctxs = []
 
+
+function isDonut(chart) {
+    return chart.type === 'pie' || chart.type === 'doughnut';
+}
+
 function update_charts(data) {
     let carousel = $('.carousel-inner');
     carousel.empty()
+    let itemInd = 0;
     for (let i = 0; i < data.length; ++i) {
         let chart = data[i];
         let dataCfg = {
             labels: chart.labels,
             datasets: []
         }
+        let show_legend = true;
+        pieCfg = {
+            hoverOffset: 40,
+            hoverBorderWidth: 10,
+            hoverBorderColor: CHART_COLORS.grey
+        }
         for (let dataset of chart.chart) {
-            dataCfg.datasets.push({
+            dataCfg.datasets.push(Object.assign({}, {
                 label: dataset.line_label,
                 data: dataset.data,
                 borderWidth: 1,
-                backgroundColor: CHART_COLORS[dataset.color],
-            });
-            if (chart.type === 'pie' || chart.type === 'doughnut') {
+                backgroundColor: dataset.color.map((el) => CHART_COLORS[el]),
+            }, (isDonut(chart) ? pieCfg : {})));
+            if (dataset.line_label === '') {
+                show_legend = false;
+            }
+            if (isDonut(chart)) {
                 let randomColours = [];
                 for (let j = 0; j < dataset.data.length; ++j) {
                     randomColours.push('rgb(' + getRandomInt(256) + ', ' + getRandomInt(256) + ',' + getRandomInt(256) + ')');
                 }
                 dataCfg.datasets.at(-1).backgroundColor = randomColours;
-                console.log(randomColours)
             }
         }
-        // console.log(data);
         let title = chart.title;
-        carousel.append("<div class=\"carousel-item" + (i === 0 ? " active" : "") + "\">\n" +
-            "                <div class=\"text-center text-vertical-center\">\n" +
-            "                    <h2>" + title + "</h2>\n" +
-            "                </div>\n" +
-            "                <div class=\"row justify-content-md-center\">\n" +
-            "                    <div class=\"col col-md-5\">\n" +
-            "                        <canvas id=\"chart" + i + "\"></canvas>\n" +
-            "                    </div>\n" +
-            "                </div>\n" +
-            "            </div>");
+        let item =
+            "           <div class=\"col col-xl-9\">\n" +
+            "               <canvas id=\"chart" + i + "\"></canvas>\n" +
+            "           </div>\n";
+
+        item = "<div class=\"row justify-content-md-center charts\">" + item + "</div>"
+
+        if (!chart.concat || i === 0) {
+            item = "<div class=\"carousel-item" + (i === 0 ? " active item-ind" : " item-ind") + itemInd++ + "\">\n"
+                + item + "</div>\n";
+            carousel.append(item);
+        } else {
+            carousel.children().last().append(item);
+        }
 
         ctxs.push(document.getElementById('chart' + i))
-        console.log()
         charts.push(new Chart(ctxs.at(-1), {
             type: chart.type,
-            data: dataCfg
+            radius: 5,
+            data: dataCfg,
+            options: {
+                radius: "75%",
+                plugins: {
+                    zoom: {
+                        pan: {
+                            enabled: true,
+                            mode: 'x'
+                        },
+                        zoom: {
+                            sensitivity: 0.5,
+                            wheel: {
+                                enabled: true,
+                            },
+                            pinch: {
+                                enabled: true
+                            },
+                            mode: 'x',
+                        }
+                    },
+                    legend: {
+                        display: show_legend
+                    },
+                    title: {
+                        display: true,
+                        text: title,
+                        font: {size: 22}
+                    },
+                },
+
+
+                tooltips: {
+                    callbacks: {
+                        label: function (tooltipItem) {
+                            return tooltipItem.yLabel;
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        ticks: {
+                            beginAtZero: true,
+                            display: !isDonut(chart)
+                        },
+                        title: {
+                            display: !isDonut(chart),
+                            text: chart.yName
+                        },
+                        grid: {
+                            display: !isDonut(chart)
+                        },
+                        // type: 'logarithmic',
+                    },
+                    x: {
+                        ticks: {
+                            autoSkip: true,
+                            maxRotation: 0,
+                            minRotation: 0,
+                            display: chart.displayXLabels,
+                        },
+                        grid: {
+                            display: false
+                        },
+                        title: {
+                            display: !isDonut(chart),
+                            text: chart.xName
+                        }
+                    }
+                }
+            }
         }));
+        adjust_suggestions();
     }
 }
