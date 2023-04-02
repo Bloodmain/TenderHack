@@ -49,15 +49,19 @@ function update_charts(data) {
         }
         let title = chart.title;
         let item =
-            "           <div class=\"col col-md-5\">\n" +
+            "           <div class=\"col col-xl-9\">\n" +
             "               <canvas id=\"chart" + i + "\"></canvas>\n" +
-            "           </div>\n"
+            "           </div>\n";
+
+        item = "<div class=\"row justify-content-md-center charts\">" + item + "</div>"
+
         if (!chart.concat || i === 0) {
-            item = "<div class=\"carousel-item" + (i === 0 ? " active item-ind" : " item-ind") + itemInd++ + "\">\n" +
-                "<div class=\"row justify-content-md-center\">" + item + "</div></div>\n";
+            item = "<div class=\"carousel-item" + (i === 0 ? " active item-ind" : " item-ind") + itemInd++ + "\">\n"
+                + item + "</div>\n";
+            console.log(item);
             carousel.append(item);
         } else {
-            carousel.children().children().last().append(item);
+            carousel.children().last().append(item);
         }
 
         ctxs.push(document.getElementById('chart' + i))
@@ -66,6 +70,14 @@ function update_charts(data) {
             type: chart.type,
             data: dataCfg,
             options: {
+                plugins: {
+                    zoom: {
+                        zoom: {
+                            enabled: true,
+                            mode: 'x'
+                        }
+                    }
+                },
                 title: {
                     display: true,
                     text: title,
@@ -89,10 +101,16 @@ function update_charts(data) {
                         scaleLabel: {
                             display: true,
                             labelString: chart.yName
-                        }
+                        },
+                        // type: 'logarithmic',
                     }],
                     xAxes: [{
-                        display: false,
+                        ticks: {
+                            display: false,
+                        },
+                        gridLines: {
+                            display: false
+                        },
                         scaleLabel: {
                             display: true,
                             labelString: chart.xName
