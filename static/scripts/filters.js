@@ -18,7 +18,9 @@ function fill_suggestions(data) {
     let is = $('.interesting-suggestions');
     for (let el of data) {
         is.append(
-            "<li><a href='" + el.url + "'>" + el.text + "</a></li>"
+            "<div class=\"suggest\"><span class='suggest2'>" +
+            el.name.substring(0, 10) + (el.name.length > 13 ? "...<br><br>" : "<br><br>") +
+            "Стоимость: " + el.cost + "<br>Id: " + el.pk  + "</span></div><br>"
         )
     }
 }

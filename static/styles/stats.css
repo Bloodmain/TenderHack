@@ -16,3 +16,15 @@
 
 .interesting-suggestions {
 }
+
+.suggest {
+    background: rgba(216,233,247, 1);
+    padding: 5px;
+    border-radius: 5px;
+    border-color: black;
+    border-width: 5px;
+}
+
+.suggest2 {
+    color: black;
+}

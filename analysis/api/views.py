@@ -15,7 +15,6 @@ REGIONS = ['Москва', 'Санкт-Петербург', 'Московска�
            'Яхрома', 'Татарстан', 'Белгород', 'Вологодская', 'Саха (Якутия)', 'Челябинская', 'Калининградская',
            'Тульская']
 
-
 """
 регион, категория, отрезок времени 
     1. прайс закупки по которой купили в контракте и начальный -> закупки 
@@ -40,19 +39,20 @@ class ChartsApi(APIView):
         inn = request.query_params['inn']
         company_tenders = Participants.objects.filter(supplier_inn=inn)
         purchases = []
-        for i in range(len(company_tenders)): #
+        for i in range(len(company_tenders)):  #
             purchas = company_tenders[i].part_id
             if (purchas.category == category or category == 'Все категории') \
                     and self.compareDate(purchas.publish_date, data_start) \
                     and self.compareDate(data_end, purchas.publish_date) and \
                     (purchas.delivery_region == region or region == "Все регионы"):
                 if purchas.id == 9128253:
-                    print(company_tenders[i].is_winner, company_tenders[i].supplier_inn.supplier_inn, company_tenders[i].id)
+                    print(company_tenders[i].is_winner, company_tenders[i].supplier_inn.supplier_inn,
+                          company_tenders[i].id)
                 purchases.append([purchas,
                                   {
-                                    'contracts': purchas.contract.all(),
-                                    'count': purchas.part.count(),
-                                    'is_winner': company_tenders[i].is_winner == "True"
+                                      'contracts': purchas.contract.all(),
+                                      'count': purchas.part.count(),
+                                      'is_winner': company_tenders[i].is_winner == "True"
                                   }])
         data = make_charts_info(purchases)
         return Response(data)
@@ -78,5 +78,6 @@ class Regions(APIView):
 
 class Suggestions(APIView):
     def get(self, request, *args, **kwargs):
-        data = [{'url': '#', 'text': "hey!"}, {'url': '#', 'text': "hey2!"}]
+        data = [{'name': 'sidfisdfgsjkdfgsgfbdsjvbsjvbsbvsdhbvjhbvjhdbvjsdvbh', 'pk': 982735982, 'cost': '23422'},
+                {'name': 'bsvuhsbvbvxbv,,xvbxc,vnbv', 'pk': 3453433, 'cost': '1222333'}]
         return Response(data)
