@@ -19,7 +19,7 @@ function fill_suggestions(data) {
     for (let el of data) {
         is.append(
             "<div class=\"suggest\"><span class='suggest2'>" +
-            el.name.substring(0, 10) + (el.name.length > 13 ? "...<br><br>" : "<br><br>") +
+            el.name + "<br><br>" +
             "Стоимость: " + el.cost + "<br>Id: " + el.pk  + "</span></div><br>"
         )
     }

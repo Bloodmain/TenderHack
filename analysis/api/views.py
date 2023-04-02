@@ -100,7 +100,7 @@ class Suggestions(APIView):
         print(data)
         data = list(map(lambda x:
                         {
-                            "name": x.lot_name,
+                            "name": x.purchase_name,
                             "pk": x.id,
                             "cost": x.price
                         }
