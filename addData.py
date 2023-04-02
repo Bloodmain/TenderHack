@@ -1,6 +1,8 @@
 import csv
 import sqlite3
 import datetime
+import re
+from smartCategorizer import trash_chars, fix_name
 
 
 def get_purch_id(id):
@@ -19,8 +21,9 @@ def loadCompanies(loadToDatabase):
     with open("csvData/companies.csv", encoding="utf-8") as file:
         reader = csv.DictReader(file, delimiter=";")
         for row in reader:
-            if len(row['name'].strip()) != 0:
-                COMPANIES[row['supplier_inn']] = [row] + COMPANIES.get(row['supplier_inn'], [])
+            if not re.match("^[\d+]{10,12}$", row['supplier_inn']):
+                continue
+            COMPANIES[row['supplier_inn']] = [row] + COMPANIES.get(row['supplier_inn'], [])
 
         if not loadToDatabase:
             return
@@ -36,33 +39,57 @@ def loadCompanies(loadToDatabase):
         cursor.execute(request)
 
 
+def replace_en_ru(lot_name):
+    letters = { # end - ru
+        "a": "а",
+        "A": "А",
+        "b": "ь",
+        "B": "В",
+        "c": "с",
+        "C": "С",
+        "e": "е",
+        "E": "Е",
+        "p": "р",
+        "P": "Р",
+        "o": "о",
+        "O": "О",
+        "H": "Н",
+        "k": "к",
+        "K": "К",
+        "M": "М",
+        "x": "х",
+        "X": "Х",
+        "T": "Т",
+        "y": "у"
+    }
+    for letter1, letter2 in letters.items():
+        lot_name = lot_name.replace(letter1, letter2)
+    return lot_name
+
+
 def loadPurchases(loadToDatabase):
     with open("csvData/purchases.csv", encoding="utf-8") as file:
         reader = csv.DictReader(file, delimiter=";")
         vals = []
         for row in reader:
-            if row['customer_inn'] not in COMPANIES:
-                continue
             row['id'] = int(get_purch_id(row['id']))
 
             PURCHASES[row['id']] = row
 
-            if not loadToDatabase:
-                continue
-
             row['publish_date'] = row['publish_date'].strip().split(' ')[0]
             row['contract_category'] = True if row['contract_category'] == "КС" else False
             row['price'] = int(float(row['price']))
-            row['lot_name'] = row['lot_name'].replace('"', '')
+            row['lot_name'] = replace_en_ru(row['lot_name'].replace('"', ''))
             row['purchase_name'] = row['purchase_name'].replace('"', '')
+            row['customer_name'] = row['customer_name'].replace('"', '')
             row['customer_inn'] = int(row['customer_inn'])
             vals.append(
                 f"""(\"{row['id']}\", \"{row['purchase_name']}\", \"{row['lot_name']}\", \"{row['price']}\", 
                 \"{row['delivery_region']}\", \"{row['customer_inn']}\", \"{row['publish_date']}\", 
-                \"{row['contract_category']}\")""")
+                \"{row['contract_category']}\", \"{row['customer_name']}\")""")
         if loadToDatabase:
             request = f"""
-                    INSERT INTO {PURCHASES_TABLE} (id, purchase_name, lot_name, price, delivery_region, customer_inn_id, publish_date, contract_category)
+                    INSERT INTO {PURCHASES_TABLE} (id, purchase_name, lot_name, price, delivery_region, customer_inn, publish_date, contract_category, customer_name)
                     VALUES
                     """
             request = request + ',\n'.join(vals)
@@ -75,7 +102,7 @@ def loadContracts(loadToDatabase):
         vals = []
         for row in reader:
             row['id'] = int(get_purch_id(row['id']))
-            if row['id'] not in PURCHASES:
+            if row['id'] not in PURCHASES or "contr" not in row['contract_reg_number']:
                 continue
             date1 = datetime.date(*list(map(int, row['contract_conclusion_date'].split('-'))))
             date2 = datetime.date(*list(map(int, PURCHASES[row['id']]['publish_date'].split(' ')[0].split('-'))))
@@ -118,30 +145,36 @@ def loadOKPD(loadToDatabase):
         reader = csv.DictReader(file)
         vals = []
         for row in reader:
-            row['Название'] = row['Название'].replace('"', '')
+            row['Название'] = fix_name(row['Название'])
             vals.append(f"""(\"{row['Код']}\", \"{row['Название']}\")""")
         if loadToDatabase:
-            request = f"""INSERT INTO {OKPD_TABLES} (no, name)
+            request = f"""INSERT INTO {OKPD_TABLE} (no, name)
                             VALUES """ + ',\n'.join(vals)
             cursor.execute(request)
 
 
+def clear_database(database):
+    cursor.execute(f"DELETE FROM {database}")
+    con.commit()
+    print(f"clear {database}: success")
+
+
 COMPANIES = {}
 PURCHASES = {}
-OKPD_TABLES = "analysis_okpd"
+OKPD_TABLE = "analysis_okpd"
 COMPANIES_TABLE = "analysis_companies"
 CONTRACTS_TABLE = "analysis_contracts"
 PURCHASES_TABLE = "analysis_purchases"
 PARTICIPANTS_TABLE = "analysis_participants"
 
-
 if __name__ == '__main__':
     con = sqlite3.connect("db.sqlite3")
     cursor = con.cursor()
+    # clear_database(PURCHASES_TABLE)
     loadToDatabase = True
     loadCompanies(loadToDatabase)
     print('Companies load: success')
-    loadPurchases(loadToDatabase)
+    loadPurchases(True)
     print('Purchases load: success')
     loadContracts(loadToDatabase)
     print('Contracts load: success')
