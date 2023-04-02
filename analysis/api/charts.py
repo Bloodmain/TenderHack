@@ -74,13 +74,13 @@ def get_purchase_charts(purchases):
 def get_region_charts(purchases):
     ret = [
         {
-            'title': 'Максимальная начальная цена',
+            'title': 'Максимальная начальная цена по регионам',
             'concat': False,
             'ks': False,
             'displayXLabels': False
         },
         {
-            'title': 'Финальная цена',
+            'title': 'Финальная цена выигрышных тендеров по регионам',
             'concat': True,
             'ks': False,
             'displayXLabels': False
@@ -103,17 +103,17 @@ def get_region_charts(purchases):
         if region not in region_info:
             region_info[region] = [0, 0]
         region_info[region][0] += i[0].price
-        region_info[region][1] += sum(contract.price for contract in i[1]["contracts"])
+        region_info[region][1] += (1 if i[1]["is_winner"] else 0) * sum(contract.price for contract in i[1]["contracts"])
     ret[0]['labels'] = list(region_info.keys())
     ret[0]['xName'] = "Регионы"
     ret[0]['yName'] = "Рубли"
-    ret[0]['chart'][0]['color'] = ['blue'] * len(purchases)
+    ret[0]['chart'][0]['color'] = ['blue'] * len(region_info.keys())
     ret[0]['chart'][0]['data'] = list(map(lambda a: region_info[a][0], region_info.keys()))
 
     ret[1]['xName'] = "Регионы"
     ret[1]['yName'] = "Рубли"
     ret[1]['labels'] = list(region_info.keys())
-    ret[1]['chart'][0]['color'] = ['blue'] * len(purchases)
+    ret[1]['chart'][0]['color'] = ['blue'] * len(region_info.keys())
     ret[1]['chart'][0]['data'] = list(map(lambda a: region_info[a][1], region_info.keys()))
     return ret
 
@@ -121,13 +121,13 @@ def get_region_charts(purchases):
 def get_year_charts(purchases):
     ret = [
         {
-            'title': 'Максимальная начальная цена',
+            'title': 'Суммарная максимальная начальная цена по годам',
             'concat': False,
             'ks': False,
             'displayXLabels': True,
         },
         {
-            'title': 'Финальная цена',
+            'title': 'Суммарная финальная цена по годам',
             'concat': True,
             'ks': False,
             'displayXLabels': True,
@@ -150,17 +150,17 @@ def get_year_charts(purchases):
         if year not in year_info:
             year_info[year] = [0, 0]
         year_info[year][0] += i[0].price
-        year_info[year][1] += sum([contract.price for contract in i[1]["contracts"]])
+        year_info[year][1] += (1 if i[1]["is_winner"] else 0) * sum([contract.price for contract in i[1]["contracts"]])
     ret[0]['labels'] = list(map(lambda a: a, year_info.keys()))
-    ret[0]['xName'] = "Года"
+    ret[0]['xName'] = "Годы"
     ret[0]['yName'] = "Рубли"
-    ret[0]['chart'][0]['color'] = ['blue' for _ in range(len(purchases))]
+    ret[0]['chart'][0]['color'] = ['blue' for _ in range(len(year_info.keys()))]
     ret[0]['chart'][0]['data'] = list(map(lambda a: year_info[a][0], year_info.keys()))
 
-    ret[1]['xName'] = "Года"
+    ret[1]['xName'] = "Годы"
     ret[1]['yName'] = "Рубли"
     ret[1]['labels'] = list(map(lambda a: a, year_info.keys()))
-    ret[1]['chart'][0]['color'] = ['blue' for _ in range(len(purchases))]
+    ret[1]['chart'][0]['color'] = ['blue' for _ in range(len(year_info.keys()))]
     ret[1]['chart'][0]['data'] = list(map(lambda a: year_info[a][1], year_info.keys()))
     return ret
 
@@ -191,7 +191,7 @@ def get_month_charts(purchases):
                    'regression': False
                    }]
     }, {
-        'title': 'Количество выигрышных и проигрышных тендеров',
+        'title': 'Количество выигранных и проигрышных тендеров по месяцам',
         'type': 'bar',
         'concat': True,
         'labels': ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август",
@@ -216,8 +216,8 @@ def get_month_charts(purchases):
 
         ret[2]['chart'][0]['data'][purchase_month] += (1 if purchase[1]["is_winner"] else 0)
         ret[2]['chart'][1]['data'][purchase_month] += (1 if not purchase[1]["is_winner"] else 0)
-    ret[0]['title'] = 'Максимальная начальная цена'
-    ret[1]['title'] = 'Финальная цена'
+    ret[0]['title'] = 'Суммарная максимальная начальная цена по месяцам'
+    ret[1]['title'] = 'Суммарная финальная цена выигранных тендеров по месяцам'
     ret[0]['xName'] = 'Месяцы'
     ret[0]['yName'] = 'Рубли'
     ret[1]['xName'] = 'Месяцы'
