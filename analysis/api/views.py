@@ -52,7 +52,7 @@ class ChartsApi(APIView):
                                     'count': purchase.part.count(),
                                     'is_winner': company_tenders[i].is_winner == "True"
                                   }])
-        data = make_charts_info(purchases)
+        data = make_charts_info(purchases, inn)
         return Response(data)
 
 

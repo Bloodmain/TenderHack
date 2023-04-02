@@ -1,23 +1,21 @@
 # from analysis.models import *
 # import pprint
-
+from analysis.api.findSuggestions import find_suggestions
+from analysis.models import *
 
 def get_purchase_charts(purchases):
     ret = [
         {
             'title': 'Максимальная начальная цена',
             'concat': False,
-            'displayXLabels': False
         },
         {
             'title': 'Финальная цена',
             'concat': True,
-            'displayXLabels': False
         },
         {
             'title': 'Количество поставщиков-участников',
-            'concat': True,
-            'displayXLabels': False
+            'concat': True
         },
     ]
     for i in ret:
@@ -35,7 +33,7 @@ def get_purchase_charts(purchases):
     ret[0]['labels'] = list(map(lambda a: a[0].purchase_name, purchases))
     ret[0]['xName'] = "Закупки"
     ret[0]['yName'] = "Рубли"
-    ret[0]['chart'][0]['color'] = [''] * len(purchases)
+    ret[0]['chart'][0]['color'] = ['' for _ in range(len(purchases))]
     for i in range(len(purchases)):
         if purchases[i][0].contract_category == "True":
             ret[0]['chart'][0]['color'][i] = 'blue'
@@ -46,7 +44,7 @@ def get_purchase_charts(purchases):
     ret[1]['xName'] = "Закупки"
     ret[1]['yName'] = "Рубли"
     ret[1]['labels'] = list(map(lambda a: a[0].purchase_name, purchases))
-    ret[1]['chart'][0]['color'] = [''] * len(purchases)
+    ret[1]['chart'][0]['color'] = ['' for _ in range(len(purchases))]
     for i in range(len(purchases)):
         if purchases[i][0].contract_category == "True":
             ret[1]['chart'][0]['color'][i] = 'blue'
@@ -66,48 +64,92 @@ def get_purchase_charts(purchases):
     return ret
 
 
+MONTH_CNT = 12
 def get_region_charts(purchases):
     ret = [
         {
             'title': 'Максимальная начальная цена',
             'concat': False,
-            'displayXLabels': False
+            'chart': [{'color': ['green'] * MONTH_CNT,
+                       'line_label': 'Выигрышные',
+                       'data': [0] * MONTH_CNT,
+                       'regression': False
+                       },
+                      {'color': ['red'] * MONTH_CNT,
+                       'line_label': 'Проигрышные',
+                       'data': [0] * MONTH_CNT,
+                       'regression': False
+                       }]
         },
         {
             'title': 'Финальная цена',
             'concat': True,
-            'displayXLabels': False
-        }
+            'chart': [{'color': ['green'] * MONTH_CNT,
+                       'line_label': 'Выигрышные',
+                       'data': [0] * MONTH_CNT,
+                       'regression': False
+                       },
+                      {'color': ['red'] * MONTH_CNT,
+                       'line_label': 'Проигрышные',
+                       'data': [0] * MONTH_CNT,
+                       'regression': False
+                       }]
+        },
+        {
+            'title': 'Количество выигрышных и проигрышных тендеров',
+            'type': 'bar',
+            'concat': True,
+            'chart': [{'color': ['green'] * MONTH_CNT,
+                       'line_label': 'Выигрышные',
+                       'data': [0] * MONTH_CNT,
+                       'regression': False
+                       },
+                      {'color': ['red'] * MONTH_CNT,
+                       'line_label': 'Проигрышные',
+                       'data': [0] * MONTH_CNT,
+                       'regression': False
+                       }]
+        },
+
     ]
-    for i in ret:
-        i['type'] = 'doughnut'
-        i['labels'] = []
-        i['chart'] = [
-            {
-                'color': [],
-                'line_label': '',
-                'data': [],
-                'regression': False
-            }
-        ]
+    # for i in ret:
+    #     i['type'] = 'doughnut'
+    #     i['labels'] = []
+    #     i['chart'] = [
+    #         {
+    #             'color': [],
+    #             'line_label': '',
+    #             'data': [],
+    #             'regression': False
+    #         }
+    #     ]
     region_info = {}
     for i in purchases:
         region = i[0].delivery_region
         if region not in region_info:
             region_info[region] = [0, 0]
         region_info[region][0] += i[0].price
-        region_info[region][1] += sum(contract.price for contract in i[1]["contracts"])
-    ret[0]['labels'] = list(region_info.keys())
+        region_info[region][1] += sum([contract.price for contract in i[1]["contracts"]])
+    ret[0]['labels'] = list(map(lambda a: a, region_info.keys()))
     ret[0]['xName'] = "Регионы"
     ret[0]['yName'] = "Рубли"
-    ret[0]['chart'][0]['color'] = ['blue'] * len(purchases)
+    ret[0]['chart'][0]['color'] = ['blue' for _ in range(len(purchases))]
     ret[0]['chart'][0]['data'] = list(map(lambda a: region_info[a][0], region_info.keys()))
 
     ret[1]['xName'] = "Регионы"
     ret[1]['yName'] = "Рубли"
-    ret[1]['labels'] = list(region_info.keys())
-    ret[1]['chart'][0]['color'] = ['blue'] * len(purchases)
+    ret[1]['labels'] = list(map(lambda a: a, region_info.keys()))
+    ret[1]['chart'][0]['color'] = ['blue' for _ in range(len(purchases))]
     ret[1]['chart'][0]['data'] = list(map(lambda a: region_info[a][1], region_info.keys()))
+
+    ret[2]['xName'] = "Регионы"
+    ret[2]['yName'] = "Рубли"
+    ret[2]['labels'] = list(map(lambda a: a, region_info.keys()))
+    print(ret[2]['chart'])
+    ret[2]['chart'][0]['color'] = ['blue'] * len(purchases)
+    ret[2]['chart'][0]['data'] = list(map(lambda a: region_info[a][1], region_info.keys()))
+    ret[2]['chart'][1]['color'] = ['blue'] * len(purchases)
+    ret[2]['chart'][1]['data'] = list(map(lambda a: region_info[a][1], region_info.keys()))
     return ret
 
 
@@ -115,12 +157,10 @@ def get_year_charts(purchases):
     ret = [
         {
             'title': 'Максимальная начальная цена',
-            'displayXLabels': True,
             'concat': False,
         },
         {
             'title': 'Финальная цена',
-            'displayXLabels': True,
             'concat': True,
         }
     ]
@@ -141,17 +181,17 @@ def get_year_charts(purchases):
         if year not in year_info:
             year_info[year] = [0, 0]
         year_info[year][0] += i[0].price
-        year_info[year][1] += sum(contract.price for contract in i[1]["contracts"])
-    ret[0]['labels'] = list(year_info.keys())
+        year_info[year][1] += sum([contract.price for contract in i[1]["contracts"]])
+    ret[0]['labels'] = list(map(lambda a: a, year_info.keys()))
     ret[0]['xName'] = "Года"
     ret[0]['yName'] = "Рубли"
-    ret[0]['chart'][0]['color'] = ['blue'] * len(purchases)
+    ret[0]['chart'][0]['color'] = ['blue' for _ in range(len(purchases))]
     ret[0]['chart'][0]['data'] = list(map(lambda a: year_info[a][0], year_info.keys()))
 
     ret[1]['xName'] = "Года"
     ret[1]['yName'] = "Рубли"
-    ret[1]['labels'] = list(year_info.keys())
-    ret[1]['chart'][0]['color'] = ['blue'] * len(purchases)
+    ret[1]['labels'] = list(map(lambda a: a, year_info.keys()))
+    ret[1]['chart'][0]['color'] = ['blue' for _ in range(len(purchases))]
     ret[1]['chart'][0]['data'] = list(map(lambda a: year_info[a][1], year_info.keys()))
     return ret
 
@@ -163,7 +203,6 @@ def get_month_charts(purchases):
         'title': '',
         'concat': False,
         'type': 'bar',
-        'displayXLabels': True,
         'labels': ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август",
                    "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"],
         'chart': [{'color': ['blue'] * MONTH_CNT,
@@ -175,7 +214,6 @@ def get_month_charts(purchases):
         'title': '',
         'concat': True,
         'type': 'bar',
-        'displayXLabels': True,
         'labels': ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август",
                    "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"],
         'chart': [{'color': ['blue'] * MONTH_CNT,
@@ -187,7 +225,6 @@ def get_month_charts(purchases):
         'title': 'Количество выигрышных и проигрышных тендеров',
         'type': 'bar',
         'concat': True,
-        'displayXLabels': True,
         'labels': ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август",
                    "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"],
         'chart': [{'color': ['green'] * MONTH_CNT,
@@ -205,8 +242,9 @@ def get_month_charts(purchases):
     for purchase in purchases:
         purchase_month = purchase[0].publish_date.month - 1  # because date.month is 1..12 inclusive
         ret[0]['chart'][0]['data'][purchase_month] += purchase[0].price
-        ret[1]['chart'][0]['data'][purchase_month] += sum(contract.price for contract in purchase[1]["contracts"] if purchase[1]["is_winner"])
-        # print(purchase[1]['is_winner'])
+        ret[1]['chart'][0]['data'][purchase_month] += sum(
+            [(1 if purchase[1]["is_winner"] else 0) * contract.price for contract in purchase[1]["contracts"]])
+
         ret[2]['chart'][0]['data'][purchase_month] += (1 if purchase[1]["is_winner"] else 0)
         ret[2]['chart'][1]['data'][purchase_month] += (1 if not purchase[1]["is_winner"] else 0)
     ret[0]['title'] = 'Максимальная начальная цена'
@@ -220,6 +258,13 @@ def get_month_charts(purchases):
 
     return ret
 
+def get_recommendations(purchases, inn):
+    print({ "inn": inn, "cluster": Companies.objects.get(supplier_inn=inn).cluster })
+    print(find_suggestions(purchases, { "inn": inn, "cluster": Companies.objects.get(supplier_inn=inn).cluster }))
+    return find_suggestions(purchases, { "inn": inn, "cluster": Companies.objects.get(supplier_inn=inn).cluster })
 
-def make_charts_info(purchases):
-    return [*get_purchase_charts(purchases), *get_month_charts(purchases), *get_year_charts(purchases), *get_region_charts(purchases)]
+def make_charts_info(purchases, inn):
+    return [*get_purchase_charts(purchases), *get_month_charts(purchases), *get_year_charts(purchases),
+            *get_region_charts(purchases), *get_recommendations(purchases, inn)]
+    # return [get_day_charts(purchases), get_month_charts(purchases), get_year_charts(purchases),
+    #         get_purchase_charts(purchases), get_region_charts(purchases)]
