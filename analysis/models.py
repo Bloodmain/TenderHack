@@ -24,12 +24,11 @@ class Companies(models.Model):
 
 
 class Purchases(models.Model):
-    # :NOTE: max_length for char field
     id = models.PositiveBigIntegerField(primary_key=True, unique=True, verbose_name="Номер закупки")
     purchase_name = models.CharField(max_length=MAX_LENGTH, verbose_name="Название закупки", blank=False)
     lot_name = models.CharField(max_length=MAX_LENGTH, verbose_name="Название лота", blank=False)
     category = models.CharField(max_length=400, verbose_name="Категории", default="", null=True)
-    price = models.PositiveIntegerField(verbose_name="Начальная максимальная цена закупки, предложенная заказчиком",
+    price = models.PositiveIntegerField(verbose_name="Начальная максимальная цена закупки, предложенная зака=зчиком",
                                         blank=False)
     customer_inn = models.PositiveBigIntegerField(verbose_name="ИНН компании")
     customer_name = models.CharField(max_length=MAX_LENGTH, verbose_name="Название компании", blank=True)
@@ -42,7 +41,7 @@ class Participants(models.Model):
     part_id = models.ForeignKey(Purchases, related_name="part", on_delete=models.CASCADE, verbose_name="Номер закупки")
     supplier_inn = models.ForeignKey(to=Companies, on_delete=models.CASCADE,
                                      verbose_name="ИНН поставщика (участника)")
-    is_winner = models.BooleanField(blank=False)
+    is_winner = models.CharField(max_length=10, blank=False)
 
 
 class Contracts(models.Model):

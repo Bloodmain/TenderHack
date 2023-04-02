@@ -1,9 +1,8 @@
-import nltk
-from nltk import word_tokenize
+import json
+import sqlite3
+
 from nltk.corpus import stopwords
 from pymorphy3 import *
-import sqlite3
-import json
 
 stops = set(stopwords.words('russian'))
 lemmatizer = MorphAnalyzer(lang='ru')

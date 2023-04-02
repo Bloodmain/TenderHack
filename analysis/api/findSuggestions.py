@@ -1,4 +1,4 @@
-from clasterizator import check_cluster
+from analysis.api.clasterizator import check_cluster
 from functools import cmp_to_key
 
 

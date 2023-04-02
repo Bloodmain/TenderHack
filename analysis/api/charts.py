@@ -1,6 +1,7 @@
 # from analysis.models import *
 # import pprint
-
+from analysis.api.findSuggestions import find_suggestions
+from analysis.models import *
 
 def get_purchase_charts(purchases):
     ret = [
@@ -61,15 +62,36 @@ def get_purchase_charts(purchases):
     return ret
 
 
+MONTH_CNT = 12
 def get_region_charts(purchases):
     ret = [
         {
             'title': 'Максимальная начальная цена',
             'concat': False,
+            'chart': [{'color': ['green'] * MONTH_CNT,
+                       'line_label': 'Выигрышные',
+                       'data': [0] * MONTH_CNT,
+                       'regression': False
+                       },
+                      {'color': ['red'] * MONTH_CNT,
+                       'line_label': 'Проигрышные',
+                       'data': [0] * MONTH_CNT,
+                       'regression': False
+                       }]
         },
         {
             'title': 'Финальная цена',
             'concat': True,
+            'chart': [{'color': ['green'] * MONTH_CNT,
+                       'line_label': 'Выигрышные',
+                       'data': [0] * MONTH_CNT,
+                       'regression': False
+                       },
+                      {'color': ['red'] * MONTH_CNT,
+                       'line_label': 'Проигрышные',
+                       'data': [0] * MONTH_CNT,
+                       'regression': False
+                       }]
         },
         {
             'title': 'Количество выигрышных и проигрышных тендеров',
@@ -88,17 +110,17 @@ def get_region_charts(purchases):
         },
 
     ]
-    for i in ret:
-        i['type'] = 'doughnut'
-        i['labels'] = []
-        i['chart'] = [
-            {
-                'color': [],
-                'line_label': '',
-                'data': [],
-                'regression': False
-            }
-        ]
+    # for i in ret:
+    #     i['type'] = 'doughnut'
+    #     i['labels'] = []
+    #     i['chart'] = [
+    #         {
+    #             'color': [],
+    #             'line_label': '',
+    #             'data': [],
+    #             'regression': False
+    #         }
+    #     ]
     region_info = {}
     for i in purchases:
         region = i[0].delivery_region
@@ -121,9 +143,10 @@ def get_region_charts(purchases):
     ret[2]['xName'] = "Регионы"
     ret[2]['yName'] = "Рубли"
     ret[2]['labels'] = list(map(lambda a: a, region_info.keys()))
-    ret[2]['chart'][0]['color'] = ['blue' for _ in range(len(purchases))]
+    print(ret[2]['chart'])
+    ret[2]['chart'][0]['color'] = ['blue'] * len(purchases)
     ret[2]['chart'][0]['data'] = list(map(lambda a: region_info[a][1], region_info.keys()))
-    ret[2]['chart'][1]['color'] = ['blue' for _ in range(len(purchases))]
+    ret[2]['chart'][1]['color'] = ['blue'] * len(purchases)
     ret[2]['chart'][1]['data'] = list(map(lambda a: region_info[a][1], region_info.keys()))
     return ret
 
@@ -233,9 +256,13 @@ def get_month_charts(purchases):
 
     return ret
 
+def get_recommendations(purchases, inn):
+    print({ "inn": inn, "cluster": Companies.objects.get(supplier_inn=inn).cluster })
+    print(find_suggestions(purchases, { "inn": inn, "cluster": Companies.objects.get(supplier_inn=inn).cluster }))
+    return find_suggestions(purchases, { "inn": inn, "cluster": Companies.objects.get(supplier_inn=inn).cluster })
 
-def make_charts_info(purchases):
+def make_charts_info(purchases, inn):
     return [*get_purchase_charts(purchases), *get_month_charts(purchases), *get_year_charts(purchases),
-            *get_region_charts(purchases)]
+            *get_region_charts(purchases), *get_recommendations(purchases, inn)]
     # return [get_day_charts(purchases), get_month_charts(purchases), get_year_charts(purchases),
     #         get_purchase_charts(purchases), get_region_charts(purchases)]
