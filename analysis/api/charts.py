@@ -31,7 +31,7 @@ def get_purchase_charts(purchases):
         i['chart'] = [
             {
                 'color': [],
-                'line_label': 'Потребность',
+                'line_label': '',
                 'data': [],
                 'regression': False
             }
@@ -41,6 +41,7 @@ def get_purchase_charts(purchases):
     ret[0]['xName'] = "Закупки"
     ret[0]['yName'] = "Рубли"
     ret[0]['chart'][0]['color'] = ['' for _ in range(len(purchases))]
+    flag = True
     for i in range(len(purchases)):
         if purchases[i][0].contract_category == "True":
             ret[0]['chart'][0]['color'][i] = 'blue'
@@ -77,13 +78,13 @@ def get_region_charts(purchases):
             'title': 'Максимальная начальная цена',
             'concat': False,
             'ks': False,
-            'displayXLabels': False
+            'displayXLabels': True
         },
         {
             'title': 'Финальная цена',
             'concat': True,
             'ks': False,
-            'displayXLabels': False
+            'displayXLabels': True
         }
     ]
     for i in ret:
@@ -107,13 +108,13 @@ def get_region_charts(purchases):
     ret[0]['labels'] = list(region_info.keys())
     ret[0]['xName'] = "Регионы"
     ret[0]['yName'] = "Рубли"
-    ret[0]['chart'][0]['color'] = ['blue'] * len(purchases)
+    ret[0]['chart'][0]['color'] = ['blue'] * len(region_info.keys())
     ret[0]['chart'][0]['data'] = list(map(lambda a: region_info[a][0], region_info.keys()))
 
     ret[1]['xName'] = "Регионы"
     ret[1]['yName'] = "Рубли"
     ret[1]['labels'] = list(region_info.keys())
-    ret[1]['chart'][0]['color'] = ['blue'] * len(purchases)
+    ret[1]['chart'][0]['color'] = ['blue'] * len(region_info.keys())
     ret[1]['chart'][0]['data'] = list(map(lambda a: region_info[a][1], region_info.keys()))
     return ret
 
@@ -154,13 +155,13 @@ def get_year_charts(purchases):
     ret[0]['labels'] = list(map(lambda a: a, year_info.keys()))
     ret[0]['xName'] = "Года"
     ret[0]['yName'] = "Рубли"
-    ret[0]['chart'][0]['color'] = ['blue' for _ in range(len(purchases))]
+    ret[0]['chart'][0]['color'] = ['blue' for _ in range(len(year_info.keys()))]
     ret[0]['chart'][0]['data'] = list(map(lambda a: year_info[a][0], year_info.keys()))
 
     ret[1]['xName'] = "Года"
     ret[1]['yName'] = "Рубли"
     ret[1]['labels'] = list(map(lambda a: a, year_info.keys()))
-    ret[1]['chart'][0]['color'] = ['blue' for _ in range(len(purchases))]
+    ret[1]['chart'][0]['color'] = ['blue' for _ in range(len(year_info.keys()))]
     ret[1]['chart'][0]['data'] = list(map(lambda a: year_info[a][1], year_info.keys()))
     return ret
 

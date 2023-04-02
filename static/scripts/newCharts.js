@@ -328,7 +328,7 @@ function update_charts(data) {
         let chart = data[i];
         let dataCfg = {
             labels: chart.labels,
-            datasets: (chart.ks) ? [{backgroundColor: CHART_COLORS.blue, label: "КС"}] : []
+            datasets: []
         }
         let show_legend = true;
         pieCfg = {
@@ -344,7 +344,10 @@ function update_charts(data) {
                 borderWidth: 1,
                 backgroundColor: dataset.color.map((el) => CHART_COLORS[el]),
             }, (isDonut(chart) ? pieCfg : {})));
-            if (dataset.line_label === '' && !(chart.ks)) {
+            if (chart.ks) {
+                dataset.line_label = ''
+            }
+            if (dataset.line_label === '') {
                 show_legend = false;
             }
             if (isDonut(chart)) {
@@ -440,7 +443,7 @@ function update_charts(data) {
                         },
                         title: {
                             display: !isDonut(chart),
-                            text: chart.xName
+                            text: chart.xName + (chart.ks ? "\n🟥 - потребности\n🟦 - кс" : "")
                         }
                     }
                 }

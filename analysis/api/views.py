@@ -79,6 +79,7 @@ class Suggestions(APIView):
         # category = request.query_params['category']
         # if category == "Все категории":
         #     category =
-        data = [{'name': 'sidfisdfgsjkdfgsgfbdsjvbsjvbsbvsdhbvjhbvjhdbvjsdvbh', 'pk': 982735982, 'cost': '23422'},
-                {'name': 'bsvuhsbvbvxbv,,xvbxc,vnbv', 'pk': 3453433, 'cost': '1222333'}]
+        # data = [{'name': 'sidfisdfgsjkdfgsgfbdsjvbsjvbsbvsdhbvjhbvjhdbvjsdvbh', 'pk': 982735982, 'cost': '23422'},
+        #         {'name': 'bsvuhsbvbvxbv,,xvbxc,vnbv', 'pk': 3453433, 'cost': '1222333'}]
+        data = []
         return Response(data)
