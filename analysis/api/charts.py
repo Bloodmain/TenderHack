@@ -118,10 +118,11 @@ def get_year_charts(purchases):
 def get_month_charts(purchases):
     MONTH_CNT = 12
     ret = [{
-        'title': 'sex',
+        'title': '',
         'index': 4,
         'type': 'bar',
-        'labels': [],
+        'labels': ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август",
+                   "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"],
         'chart': [{'color': 'blue',
                    'line_label': 'change line label',
                    'data': [0] * MONTH_CNT,
@@ -133,6 +134,8 @@ def get_month_charts(purchases):
         ret[0]['chart'][0]['data'][purchase_month] += purchase.price
         ret[1]['chart'][0]['data'][purchase_month] += sum(
             [(1 if purchase[1]["is_winner"] else 0) * contract.price for contract in purchase[1]["contracts"]])
+    ret[0]['title'] = 'Максимальная начальная цена'
+    ret[1]['title'] = 'Финальная цена'
     return ret
 
 
