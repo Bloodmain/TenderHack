@@ -9,9 +9,7 @@ def check_cluster(x):
 
 
 def cmp(item1, item2):
-    if len(item1[1]) == len(item2[1]):
-        return item2[0].publish_date - item1[0].publish_date
-    return len(item1[1]) - len(item2[1])
+    return item2.publish_date - item1.publish_date
 
 
 # Pred: все purchases в данной категории
@@ -19,12 +17,11 @@ def cmp(item1, item2):
 #   args['cluster'] - кластер поставщика (1..4)
 def find_suggestions(purchases, args):
     ret = []
-    for i in len(purchases):
+    for i in purchases.count():
         purchase = purchases[i]
-        contracts = args['contracts'][i]
         if check_cluster(purchase.price) != args['cluster']:
             continue
-        ret.append([purchase, contracts])
-    sorted(ret, key=cmp_to_key(cmp))
-    return ret
+        ret.append(purchase)
+    return sorted(ret, key=cmp_to_key(cmp))
+
 # Желательно выводить в специальных предложениях для каждого тендера конкуренцию в нём, дату и цену

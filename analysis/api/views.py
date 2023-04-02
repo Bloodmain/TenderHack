@@ -74,7 +74,6 @@ class Regions(APIView):
 
 class Suggestions(APIView):
     def get(self, request, *args, **kwargs):
-        # return Response([])
         inn = request.query_params['inn']
         cluster = Companies.objects.get(supplier_inn=inn).cluster
         category = request.query_params['category']
@@ -83,21 +82,16 @@ class Suggestions(APIView):
             purchases = Purchases.objects.filter(category)
         else:
             purchases = Purchases.objects
-        print(1)
         purchases = purchases.filter(id__in=Participants.objects.filter(is_winner="False").values("part_id"))
-        print(2)
-        purchases = purchases.filter(id__not_in=Participants.objects.filter(supplier_inn=inn).values("supplier_inn")).all()
-        print(3)
-        contracts = list(map(lambda x: x.contract, purchases))
-
-        if len(purchases) == 0:
-            return Response([])
+        purchases = purchases.filter(id__not_in=Participants.objects.filter(supplier_inn=inn).values("part_id")).all()
 
         data = get_recommendations(purchases, {
             "inn": inn,
-            "cluster": cluster,
-            "contracts": contracts
+            "cluster": cluster
         })[:5]
+
+        if len(purchases) == 0:
+            return Response([])
         data = list(map(lambda x:
                         {
                             "name": x[0].lot_name,
