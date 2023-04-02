@@ -17,6 +17,7 @@ class Companies(models.Model):
         (BLOCKED, "blocked")
     ]
 
+    cluster = models.IntegerField(verbose_name="кластер", default=0)
     status = models.CharField(max_length=15, choices=COMPANY_STATUS,
                               verbose_name="Статус компании(Активная или Заблокирована)")
     count_managers = models.PositiveIntegerField(verbose_name="Кол - во контактный лиц компании")
