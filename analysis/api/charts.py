@@ -150,7 +150,63 @@ def get_month_charts(purchases):
     MONTH_CNT = 12
     ret = [{
         'title': '',
-        'index': 4,
+        'type': 'bar',
+        'labels': ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август",
+                   "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"],
+        'chart': [{'color': 'blue',
+                   'line_label': '',
+                   'data': [0] * MONTH_CNT,
+                   'regression': False
+                   }]
+    }, {
+        'title': '',
+        'type': 'bar',
+        'labels': ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август",
+                   "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"],
+        'chart': [{'color': 'blue',
+                   'line_label': '',
+                   'data': [0] * MONTH_CNT,
+                   'regression': False
+                   }]
+    }, {
+        'title': 'Количество выигрышных и проигрышных тендеров',
+        'type': 'bar',
+        'labels': ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август",
+                   "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"],
+        'chart': [{'color': 'green',
+                   'line_label': 'Выигрышные',
+                   'data': [0] * MONTH_CNT,
+                   'regression': False
+                   }, {'color': 'red',
+                       'line_label': 'Проигрышные',
+                       'data': [0] * MONTH_CNT,
+                       'regression': False
+                       }]
+    },
+    ]
+    for purchase in purchases:
+        purchase_month = purchase.publish_date.month - 1  # because date.month is 1..12 inclusive
+        ret[0]['chart'][0]['data'][purchase_month] += purchase.price
+        ret[1]['chart'][0]['data'][purchase_month] += sum(
+            [(1 if purchase[1]["is_winner"] else 0) * contract.price for contract in purchase[1]["contracts"]])
+        ret[2]['chart'][0]['data'][purchase_month] += (1 if purchase[1]["is_winner"] else 0)
+        ret[2]['chart'][1]['data'][purchase_month] += (1 if not purchase[1]["is_winner"] else 0)
+    ret[0]['title'] = 'Максимальная начальная цена'
+    ret[1]['title'] = 'Финальная цена'
+    ret[0]['xName'] = 'Месяцы'
+    ret[0]['yName'] = 'Рубли'
+    ret[1]['xName'] = 'Месяцы'
+    ret[1]['yName'] = 'Рубли'
+    ret[2]['xName'] = 'Месяцы'
+    ret[2]['yName'] = 'Рубли'
+
+    return ret
+
+
+# view_type принадлежит {'year', 'month', 'region'}
+def get_successful_tenders_chart(purchases, view_type):
+    ret = [{
+        'title': '',
         'type': 'bar',
         'labels': ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август",
                    "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"],
@@ -159,19 +215,7 @@ def get_month_charts(purchases):
                    'data': [0] * MONTH_CNT,
                    'regression': False
                    }]
-    } for i in range(2)]
-    for purchase in purchases:
-        purchase_month = purchase.publish_date.month - 1  # because date.month is 1..12 inclusive
-        ret[0]['chart'][0]['data'][purchase_month] += purchase.price
-        ret[1]['chart'][0]['data'][purchase_month] += sum(
-            [(1 if purchase[1]["is_winner"] else 0) * contract.price for contract in purchase[1]["contracts"]])
-    ret[0]['title'] = 'Максимальная начальная цена'
-    ret[1]['title'] = 'Финальная цена'
-    ret[0]['xName'] = 'Месяцы'
-    ret[0]['yName'] = 'Рубли'
-    ret[1]['xName'] = 'Месяцы'
-    ret[1]['yName'] = 'Рубли'
-    return ret
+    }]
 
 
 def make_charts_info(purchases):
