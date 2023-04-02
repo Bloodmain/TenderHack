@@ -1,5 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
+
+from analysis.api.findSuggestions import find_suggestions
 from analysis.models import *
 from analysis.api.charts import make_charts_info, get_recommendations
 import datetime
@@ -14,7 +16,6 @@ REGIONS = ['Москва', 'Санкт-Петербург', 'Московска�
            'Ханты-Мансийский АО - Югра', 'Старорусский', 'Иркутск', 'Ярославская', 'Ростовская', 'Брянская',
            'Яхрома', 'Татарстан', 'Белгород', 'Вологодская', 'Саха (Якутия)', 'Челябинская', 'Калининградская',
            'Тульская']
-
 
 """
 регион, категория, отрезок времени 
@@ -39,7 +40,7 @@ class ChartsApi(APIView):
         inn = request.query_params['inn']
         company_tenders = Participants.objects.filter(supplier_inn=inn)
         purchases = []
-        for i in range(len(company_tenders)): #
+        for i in range(len(company_tenders)):  #
             purchase = company_tenders[i].part_id
             if (purchase.category == category or category == 'Все категории') \
                     and self.compareDate(purchase.publish_date, data_start) \
@@ -47,9 +48,9 @@ class ChartsApi(APIView):
                     (purchase.delivery_region == region or region == "Все регионы"):
                 purchases.append([purchase,
                                   {
-                                    'contracts': purchase.contract.all(),
-                                    'count': purchase.part.count(),
-                                    'is_winner': company_tenders[i].is_winner == "True"
+                                      'contracts': purchase.contract.all(),
+                                      'count': purchase.part.count(),
+                                      'is_winner': company_tenders[i].is_winner == "True"
                                   }])
         data = make_charts_info(purchases, inn)
         return Response(data)
@@ -88,17 +89,15 @@ class Suggestions(APIView):
         print(2, purchases.count())
         purchases = purchases.filter(id__in=Participants.objects.exclude(supplier_inn=inn).values("part_id"))
         print(3, purchases.count())
-        # contracts = list(map(lambda x: x.contract.count(), purchases))
-        # print(len(contracts))
 
-        if len(purchases) == 0:
-            return Response([])
-
-        data = get_recommendations(purchases, {
+        data = find_suggestions(purchases, {
             "inn": inn,
             "cluster": cluster,
-            # "contracts": contracts
         })[:5]
+
+        if purchases.count() == 0:
+            return Response([])
+        print(data)
         data = list(map(lambda x:
                         {
                             "name": x[0].lot_name,

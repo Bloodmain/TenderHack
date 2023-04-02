@@ -19,12 +19,12 @@ def cmp(item1, item2):
 #   args['cluster'] - кластер поставщика (1..4)
 def find_suggestions(purchases, args):
     ret = []
-    for i in len(purchases):
+    for i in range(len(purchases)):
+        if i % 1000 == 0:
+            print(i, len(ret))
         purchase = purchases[i]
-        # contracts = args['contracts'][i]
         if check_cluster(purchase.price) != args['cluster']:
             continue
         ret.append(purchase)
-    sorted(ret, key=cmp_to_key(cmp))
-    return ret
+    return sorted(ret, key=cmp_to_key(cmp))
 # Желательно выводить в специальных предложениях для каждого тендера конкуренцию в нём, дату и цену

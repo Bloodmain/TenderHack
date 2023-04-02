@@ -228,10 +228,10 @@ def get_month_charts(purchases):
     return ret
 
 
-def get_recommendations(purchases, inn):
-    print({ "inn": inn, "cluster": Companies.objects.get(supplier_inn=inn).cluster })
-    print(find_suggestions(purchases, { "inn": inn, "cluster": Companies.objects.get(supplier_inn=inn).cluster }))
-    return find_suggestions(purchases, { "inn": inn, "cluster": Companies.objects.get(supplier_inn=inn).cluster })
+def get_recommendations(purchases, args):
+    # print({ "inn": inn, "cluster": Companies.objects.get(supplier_inn=inn).cluster })
+    # print(find_suggestions(purchases, { "inn": inn, "cluster": Companies.objects.get(supplier_inn=inn).cluster }))
+    return find_suggestions(purchases, args)
 
 def make_charts_info(purchases, inn):
     return [*get_purchase_charts(purchases), *get_month_charts(purchases), *get_year_charts(purchases),
