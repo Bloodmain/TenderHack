@@ -45,6 +45,8 @@ class ChartsApi(APIView):
                     and self.compareDate(purchas.publish_date, data_start) \
                     and self.compareDate(data_end, purchas.publish_date) and \
                     (purchas.delivery_region == region or region == "Все регионы"):
+                if purchas.id == 9128253:
+                    print(company_tenders[i].is_winner, company_tenders[i].supplier_inn.supplier_inn, company_tenders[i].id)
                 purchases.append([purchas,
                                   {
                                     'contracts': purchas.contract.all(),
@@ -89,13 +91,14 @@ class ChartsApi(APIView):
         ]
         # print(purchases[0][0].delivery_region)
         data = make_charts_info(purchases)
+        # print(*data, sep='\n\n\n\n')
         # pprint.pprint(data[0])
-        return Response(data[0])
+        return Response(data)
 
 
 class Categories(APIView):
     def get(self, request, *args, **kwargs):
-        data = {'categories': list(map(lambda x: x.name, OKPD.objects.all()))}
+        data = {'categories': ["1", "2", "3"]} # list(map(lambda x: x.name, OKPD.objects.all()))
         return Response(data)
 
 
