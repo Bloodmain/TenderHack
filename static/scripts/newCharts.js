@@ -328,7 +328,7 @@ function update_charts(data) {
         let chart = data[i];
         let dataCfg = {
             labels: chart.labels,
-            datasets: []
+            datasets: (chart.ks) ? [{backgroundColor: CHART_COLORS.blue, label: "КС"}] : []
         }
         let show_legend = true;
         pieCfg = {
@@ -344,7 +344,7 @@ function update_charts(data) {
                 borderWidth: 1,
                 backgroundColor: dataset.color.map((el) => CHART_COLORS[el]),
             }, (isDonut(chart) ? pieCfg : {})));
-            if (dataset.line_label === '') {
+            if (dataset.line_label === '' && !(chart.ks)) {
                 show_legend = false;
             }
             if (isDonut(chart)) {
@@ -396,7 +396,7 @@ function update_charts(data) {
                         }
                     },
                     legend: {
-                        display: true,
+                        display: show_legend,
                     },
                     title: {
                         display: true,

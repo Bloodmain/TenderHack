@@ -71,87 +71,50 @@ def get_purchase_charts(purchases):
     return ret
 
 
-MONTH_CNT = 12
 def get_region_charts(purchases):
     ret = [
         {
             'title': 'Максимальная начальная цена',
             'concat': False,
             'ks': False,
-            'displayXLabels': True,
-            'chart': [{'color': ['green'] * MONTH_CNT,
-                       'line_label': 'Выигрышные',
-                       'data': [0] * MONTH_CNT,
-                       'regression': False
-                       },
-                      {'color': ['red'] * MONTH_CNT,
-                       'line_label': 'Проигрышные',
-                       'data': [0] * MONTH_CNT,
-                       'regression': False
-                       }]
+            'displayXLabels': False
         },
         {
             'title': 'Финальная цена',
             'concat': True,
             'ks': False,
-            'displayXLabels': True,
-            'chart': [{'color': ['green'] * MONTH_CNT,
-                       'line_label': 'Выигрышные',
-                       'data': [0] * MONTH_CNT,
-                       'regression': False
-                       },
-                      {'color': ['red'] * MONTH_CNT,
-                       'line_label': 'Проигрышные',
-                       'data': [0] * MONTH_CNT,
-                       'regression': False
-                       }]
-        },
-        {
-            'title': 'Количество выигрышных и проигрышных тендеров',
-            'type': 'bar',
-            'concat': True,
-            'ks': False,
-            'displayXLabels': True,
-            'chart': [{'color': ['green'] * MONTH_CNT,
-                       'line_label': 'Выигрышные',
-                       'data': [0] * MONTH_CNT,
-                       'regression': False
-                       },
-                      {'color': ['red'] * MONTH_CNT,
-                       'line_label': 'Проигрышные',
-                       'data': [0] * MONTH_CNT,
-                       'regression': False
-                       }]
-        },
-
+            'displayXLabels': False
+        }
     ]
+    for i in ret:
+        i['type'] = 'doughnut'
+        i['labels'] = []
+        i['chart'] = [
+            {
+                'color': [],
+                'line_label': '',
+                'data': [],
+                'regression': False
+            }
+        ]
     region_info = {}
     for i in purchases:
         region = i[0].delivery_region
         if region not in region_info:
             region_info[region] = [0, 0]
         region_info[region][0] += i[0].price
-        region_info[region][1] += sum([contract.price for contract in i[1]["contracts"]])
-    ret[0]['labels'] = list(map(lambda a: a, region_info.keys()))
+        region_info[region][1] += sum(contract.price for contract in i[1]["contracts"])
+    ret[0]['labels'] = list(region_info.keys())
     ret[0]['xName'] = "Регионы"
     ret[0]['yName'] = "Рубли"
-    ret[0]['chart'][0]['color'] = ['blue' for _ in range(len(purchases))]
+    ret[0]['chart'][0]['color'] = ['blue'] * len(purchases)
     ret[0]['chart'][0]['data'] = list(map(lambda a: region_info[a][0], region_info.keys()))
 
     ret[1]['xName'] = "Регионы"
     ret[1]['yName'] = "Рубли"
-    ret[1]['labels'] = list(map(lambda a: a, region_info.keys()))
-    ret[1]['chart'][0]['color'] = ['blue' for _ in range(len(purchases))]
+    ret[1]['labels'] = list(region_info.keys())
+    ret[1]['chart'][0]['color'] = ['blue'] * len(purchases)
     ret[1]['chart'][0]['data'] = list(map(lambda a: region_info[a][1], region_info.keys()))
-
-    ret[2]['xName'] = "Регионы"
-    ret[2]['yName'] = "Рубли"
-    ret[2]['labels'] = list(map(lambda a: a, region_info.keys()))
-    print(ret[2]['chart'])
-    ret[2]['chart'][0]['color'] = ['blue'] * len(purchases)
-    ret[2]['chart'][0]['data'] = list(map(lambda a: region_info[a][1], region_info.keys()))
-    ret[2]['chart'][1]['color'] = ['blue'] * len(purchases)
-    ret[2]['chart'][1]['data'] = list(map(lambda a: region_info[a][1], region_info.keys()))
     return ret
 
 
