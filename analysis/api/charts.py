@@ -89,7 +89,6 @@ def get_region_charts(purchases):
             region_info[region] = [0, 0]
         region_info[region][0] += i[0].price
         region_info[region][1] += sum([contract.price for contract in i[1]["contracts"]])
-    purchases.sort(key=lambda a: region_info[a[0].publish_region][1])
     ret[0]['labels'] = list(map(lambda a: a, region_info.keys()))
     ret[0]['xName'] = "Регионы"
     ret[0]['yName'] = "Рубли"
@@ -99,18 +98,50 @@ def get_region_charts(purchases):
     ret[1]['xName'] = "Регионы"
     ret[1]['yName'] = "Рубли"
     ret[1]['labels'] = list(map(lambda a: a, region_info.keys()))
-    ret[1]['chart'][0]['color'] = ['' for _ in range(len(purchases))]
+    ret[1]['chart'][0]['color'] = ['blue' for _ in range(len(purchases))]
     ret[1]['chart'][0]['data'] = list(map(lambda a: region_info[a][1], region_info.keys()))
 
 
 def get_year_charts(purchases):
-    ret = {
-        'title': 'sex',
-        'index': 4,
-        'type': 'bar',
-        'labels': [],
-        'chart': []
-    }
+    ret = [
+        {
+            'title': 'Максимальная начальная цена',
+            'concat': False,
+        },
+        {
+            'title': 'Финальная цена',
+            'concat': True,
+        }
+    ]
+    for i in ret:
+        i['type'] = 'bar'
+        i['labels'] = []
+        i['chart'] = [
+            {
+                'color': [],
+                'line_label': '',
+                'data': [],
+                'regression': False
+            }
+        ]
+    year_info = {}
+    for i in purchases:
+        year = i[0].publish_date.year
+        if year not in year_info:
+            year_info[year] = [0, 0]
+        year_info[year][0] += i[0].price
+        year_info[year][1] += sum([contract.price for contract in i[1]["contracts"]])
+    ret[0]['labels'] = list(map(lambda a: a, year_info.keys()))
+    ret[0]['xName'] = "Года"
+    ret[0]['yName'] = "Рубли"
+    ret[0]['chart'][0]['color'] = ['blue' for _ in range(len(purchases))]
+    ret[0]['chart'][0]['data'] = list(map(lambda a: year_info[a][0], year_info.keys()))
+
+    ret[1]['xName'] = "Года"
+    ret[1]['yName'] = "Рубли"
+    ret[1]['labels'] = list(map(lambda a: a, year_info.keys()))
+    ret[1]['chart'][0]['color'] = ['blue' for _ in range(len(purchases))]
+    ret[1]['chart'][0]['data'] = list(map(lambda a: year_info[a][1], year_info.keys()))
 
 
 def get_month_charts(purchases):
