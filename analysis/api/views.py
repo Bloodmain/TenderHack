@@ -35,6 +35,7 @@ class ChartsApi(APIView):
         data_end = datetime.date(*list(map(int, request.query_params['dateEnd'].split('-'))))
         category = request.query_params['category']
         category = OKPD.objects.filter(name=category).get().no if category != "Все категории" else category
+        print(category)
         region = request.query_params['region']
         inn = request.query_params['inn']
         company_tenders = Participants.objects.filter(supplier_inn=inn)
@@ -62,6 +63,7 @@ class Categories(APIView):
         for part in Participants.objects.filter(supplier_inn=inn).all():
             for elem in OKPD.objects.filter(no=part.part_id.category).all():
                 res.add(elem.name)
+        print(len(res))
         data = {'categories': list(res)}
         return Response(data)
 
