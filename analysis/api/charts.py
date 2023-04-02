@@ -167,6 +167,10 @@ def get_month_charts(purchases):
             [(1 if purchase[1]["is_winner"] else 0) * contract.price for contract in purchase[1]["contracts"]])
     ret[0]['title'] = 'Максимальная начальная цена'
     ret[1]['title'] = 'Финальная цена'
+    ret[0]['xName'] = 'Месяцы'
+    ret[0]['yName'] = 'Рубли'
+    ret[1]['xName'] = 'Месяцы'
+    ret[1]['yName'] = 'Рубли'
     return ret
 
 
