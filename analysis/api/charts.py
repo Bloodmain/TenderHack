@@ -131,13 +131,13 @@ def get_region_charts(purchases):
     ret[0]['labels'] = list(map(lambda a: a, region_info.keys()))
     ret[0]['xName'] = "Регионы"
     ret[0]['yName'] = "Рубли"
-    ret[0]['chart'][0]['color'] = ['blue' for _ in range(len(purchases))]
+    ret[0]['chart'][0]['color'] = ['blue' for _ in range(len(region_info.keys()))]
     ret[0]['chart'][0]['data'] = list(map(lambda a: region_info[a][0], region_info.keys()))
 
     ret[1]['xName'] = "Регионы"
     ret[1]['yName'] = "Рубли"
     ret[1]['labels'] = list(map(lambda a: a, region_info.keys()))
-    ret[1]['chart'][0]['color'] = ['blue' for _ in range(len(purchases))]
+    ret[1]['chart'][0]['color'] = ['blue' for _ in range(len(region_info.keys()))]
     ret[1]['chart'][0]['data'] = list(map(lambda a: region_info[a][1], region_info.keys()))
 
     ret[2]['xName'] = "Регионы"
@@ -183,13 +183,13 @@ def get_year_charts(purchases):
     ret[0]['labels'] = list(map(lambda a: a, year_info.keys()))
     ret[0]['xName'] = "Года"
     ret[0]['yName'] = "Рубли"
-    ret[0]['chart'][0]['color'] = ['blue' for _ in range(len(purchases))]
+    ret[0]['chart'][0]['color'] = ['blue' for _ in range(len(year_info.keys()))]
     ret[0]['chart'][0]['data'] = list(map(lambda a: year_info[a][0], year_info.keys()))
 
     ret[1]['xName'] = "Года"
     ret[1]['yName'] = "Рубли"
     ret[1]['labels'] = list(map(lambda a: a, year_info.keys()))
-    ret[1]['chart'][0]['color'] = ['blue' for _ in range(len(purchases))]
+    ret[1]['chart'][0]['color'] = ['blue' for _ in range(len(year_info.keys()))]
     ret[1]['chart'][0]['data'] = list(map(lambda a: year_info[a][1], year_info.keys()))
     return ret
 
@@ -254,6 +254,42 @@ def get_month_charts(purchases):
     ret[2]['xName'] = 'Месяцы'
     ret[2]['yName'] = 'Рубли'
 
+    return ret
+
+
+def get_category_chart(purchases):
+    ret = [
+        {
+            'title': 'Сумма финальных цен по категории',
+            'concat': False,
+        },
+    ]
+    for i in ret:
+        i['type'] = 'bar'
+        i['labels'] = []
+        i['chart'] = [
+            {
+                'color': [],
+                'line_label': '',
+                'data': [],
+                'regression': False
+            }
+        ]
+    category_info = {}
+    for i in purchases:
+        category = i[0].category
+        while category != "":
+            if category not in category_info:
+                category_info[category] = [0, 0]
+            category_info[category][0] += i[0].price
+            category_info[category][1] += sum([contract.price for contract in i[1]["contracts"]])
+            category = category.split('.')
+            category = ".".join(category[0:len(category) - 1])
+    ret[0]['labels'] = list(map(lambda a: a, category_info.keys()))
+    ret[0]['xName'] = "Категории"
+    ret[0]['yName'] = "Рубли"
+    ret[0]['chart'][0]['color'] = ['blue' for _ in range(len(category_info.keys()))]
+    ret[0]['chart'][0]['data'] = list(map(lambda a: category_info[a][1], category_info.keys()))
     return ret
 
 def get_recommendations(purchases, inn):
