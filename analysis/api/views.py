@@ -85,20 +85,20 @@ class Suggestions(APIView):
         else:
             purchases = Purchases.objects
         purchases = purchases.filter(id__in=Participants.objects.filter(is_winner="False").values("part_id"))
-        purchases = purchases.filter(id__not_in=Participants.objects.filter(supplier_inn=inn).values("part_id")).all()
+        purchases = purchases.filter(id__in=Participants.objects.exclude(supplier_inn=inn).values("part_id")).all()
+
+        if purchases.count() == 0:
+            return Response([])
 
         data = get_recommendations(purchases, {
             "inn": inn,
             "cluster": cluster
         })[:5]
-
-        if len(purchases) == 0:
-            return Response([])
         data = list(map(lambda x:
                         {
-                            "name": x[0].lot_name,
-                            "pk": x[0].id,
-                            "cost": x[0].price
+                            "name": x.lot_name,
+                            "pk": x.id,
+                            "cost": x.price
                         }
                         , data))
         # data = [{'name': 'sidfisdfgsjkdfgsgfbdsjvbsjvbsbvsdhbvjhbvjhdbvjsdvbh', 'pk': 982735982, 'cost': '23422'},
