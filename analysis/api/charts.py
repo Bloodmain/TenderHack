@@ -15,7 +15,7 @@ def get_purchase_charts(purchases):
         {
             'title': 'Количество поставщиков-участников',
             'concat': True
-         },
+        },
     ]
     for i in ret:
         i['type'] = 'bar'
@@ -28,7 +28,7 @@ def get_purchase_charts(purchases):
                 'regression': False
             }
         ]
-    purchases.sort(key=lambda a: a[0].publish_date )
+    purchases.sort(key=lambda a: a[0].publish_date)
     ret[0]['labels'] = list(map(lambda a: a[0].purchase_name, purchases))
     ret[0]['xName'] = "Закупки"
     ret[0]['yName'] = "Рубли"
@@ -49,7 +49,8 @@ def get_purchase_charts(purchases):
             ret[0]['chart'][0]['color'][i] = 'blue'
         else:
             ret[0]['chart'][0]['color'][i] = 'red'
-    ret[1]['chart'][0]['data'] = list(map(lambda a: sum(map(lambda contract: contract.price, a[1]['contracts'])), purchases))
+    ret[1]['chart'][0]['data'] = list(
+        map(lambda a: sum(map(lambda contract: contract.price, a[1]['contracts'])), purchases))
 
     ret[2]['xName'] = "Закупки"
     ret[2]['yName'] = "Количество поставщиков"
@@ -113,14 +114,26 @@ def get_year_charts(purchases):
     }
 
 
+# Pred: дата purchase не раньше 1 января текущего года
 def get_month_charts(purchases):
-    ret = {
+    MONTH_CNT = 12
+    ret = [{
         'title': 'sex',
         'index': 4,
         'type': 'bar',
         'labels': [],
-        'chart': []
-    }
+        'chart': [{'color': 'blue',
+                   'line_label': 'change line label',
+                   'data': [0] * MONTH_CNT,
+                   'regression': False
+                   }]
+    } for i in range(2)]
+    for purchase in purchases:
+        purchase_month = purchase.publish_date.month - 1  # because date.month is 1..12 inclusive
+        ret[0]['chart'][0]['data'][purchase_month] += purchase.price
+        ret[1]['chart'][0]['data'][purchase_month] += sum(
+            [(1 if purchase[1]["is_winner"] else 0) * contract.price for contract in purchase[1]["contracts"]])
+    return ret
 
 
 def make_charts_info(purchases):
