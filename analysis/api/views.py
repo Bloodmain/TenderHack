@@ -83,12 +83,13 @@ class Suggestions(APIView):
             purchases = Purchases.objects.filter(category)
         else:
             purchases = Purchases.objects
-        print(1)
+        print(1, purchases.count())
         purchases = purchases.filter(id__in=Participants.objects.filter(is_winner="False").values("part_id"))
-        print(2)
-        purchases = purchases.filter(id__not_in=Participants.objects.filter(supplier_inn=inn).values("supplier_inn")).all()
-        print(3)
-        contracts = list(map(lambda x: x.contract, purchases))
+        print(2, purchases.count())
+        purchases = purchases.filter(id__in=Participants.objects.exclude(supplier_inn=inn).values("part_id"))
+        print(3, purchases.count())
+        # contracts = list(map(lambda x: x.contract.count(), purchases))
+        # print(len(contracts))
 
         if len(purchases) == 0:
             return Response([])
@@ -96,7 +97,7 @@ class Suggestions(APIView):
         data = get_recommendations(purchases, {
             "inn": inn,
             "cluster": cluster,
-            "contracts": contracts
+            # "contracts": contracts
         })[:5]
         data = list(map(lambda x:
                         {
