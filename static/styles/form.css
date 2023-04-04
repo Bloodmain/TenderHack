@@ -1,0 +1,107 @@
+input, select, textarea, button, .button {
+    width: 100%;
+}
+
+select {
+    appearance: none;
+    background-size: 15px;
+    background-repeat: no-repeat;
+    background-position: 99% center;
+}
+
+input:not([type=submit]), textarea, select {
+    background-color: #F7F7F7;
+    border: none;
+    outline: none;
+    padding: 10px 20px;
+}
+
+form input, form textarea, select {
+    min-width: 230px;
+}
+
+input:not([type=submit]):focus, textarea:focus, select:active {
+    box-shadow: 0px 0px 0px 1px black;
+}
+
+input:not([type=submit])::placeholder, textarea::placeholder, select::placeholder {
+    color: #A9A9A9;
+}
+
+input[type=submit], button, .button {
+    background: black;
+    color: white;
+    padding: 10px 20px;
+    border: 0;
+    outline: none;
+    cursor: pointer;
+}
+
+form .errorlist {
+    margin: 0;
+    padding: 0;
+}
+
+form .errorlist li {
+    list-style-type: none;
+    font-size: 14px;
+    color: red;
+}
+
+label {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+input[type="checkbox"] {
+    min-width: 0 !important;
+    width: fit-content !important;
+    padding: 0;
+    margin: 10px;
+}
+
+.v-enter-active,
+.v-leave-active {
+    transition: .3s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+    opacity: 0;
+}
+
+.v-enter-from {
+    transition: 0.5s ease-in-out;
+    transform: translateX(100%);
+}
+
+.v-leave-active {
+    position: absolute;
+    transform: translateX(-100%);
+}
+
+.form-steps {
+    display: flex;
+    justify-content: center;
+}
+
+.form-step {
+    background: #F7F7F7;
+    height: 4px;
+    min-width: 50px;
+    transition: 0.3s ease-in-out;
+}
+
+.form-step.active {
+    background: black;
+}
+
+button.button-back {
+    background: none;
+    color: #b2bec3;
+    transition: .3s ease-in-out;
+}
+
+button.button-back:hover {
+    background: #F7F7F7;
+}
