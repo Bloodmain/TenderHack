@@ -17,7 +17,7 @@ def company_from_companies(companies):
 
 
 def loadCompanies(loadToDatabase):
-    with open("csvData/companies2.csv", encoding="utf-8") as file:
+    with open("csvData/companies3.csv", encoding="utf-8") as file:
         reader = csv.DictReader(file, delimiter=";")
         for row in reader:
             if not re.match("^\\d{10,12}$", row['supplier_inn']):
@@ -67,7 +67,7 @@ def replace_en_ru(lot_name):
 
 
 def loadPurchases(loadToDatabase):
-    with open("csvData/purchases2.csv", encoding="utf-8") as file:
+    with open("csvData/purchases3.csv", encoding="utf-8") as file:
         reader = csv.DictReader(file, delimiter=";")
         vals = []
         for row in reader:

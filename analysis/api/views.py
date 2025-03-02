@@ -93,7 +93,7 @@ class Suggestions(APIView):
             "inn": inn,
             "cluster": cluster,
             # "contracts": contracts,
-        })[:5]
+        })[:10]
 
         if purchases.count() == 0:
             return Response([])
